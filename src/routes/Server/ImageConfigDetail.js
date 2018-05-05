@@ -2,14 +2,14 @@ import React, { PureComponent } from 'react';
 import { Card } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 // import classNames from 'classnames';
-// import styles from './index.less'
+// import styles from './ImageConfigDetail.less'
 
-export default class Dashboard extends PureComponent {
+export default class ImageConfigDetail extends PureComponent {
   render() {
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
-          Dashboard
+          ImageConfigDetail
         </Card>
       </PageHeaderLayout>
     );

@@ -74,13 +74,32 @@ export const getRouterData = app => {
     },
     '/dashboard': {
       component: dynamicWrapper(app, [], () => import('../routes/Dashboard')),
+      // hideInBreadcrumb: true,
+      // name: '工作台',
+      // authority: 'admin',
     },
-    // '/aaa/bbb': {
-    //   component: dynamicWrapper(app, ['project', 'activities', 'chart'], () => import('../routes/Dashboard/Workplace')),
-    //   // hideInBreadcrumb: true,
-    //   // name: '工作台',
-    //   // authority: 'admin',
-    // },
+    '/server/repository/:list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Server/CodeRepository')),
+    },
+    '/server/repository/detail/:id': {
+      component: dynamicWrapper(app, [], () => import('../routes/Server/CodeRepositoryDetail')),
+      name: '详情',
+    },
+    '/server/config/:list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Server/ImageConfig')),
+    },
+    '/server/config/detail/:id': {
+      component: dynamicWrapper(app, [], () => import('../routes/Server/ImageConfigDetail')),
+      name: '详情',
+    },
+    '/server/list/:list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Server/ServerList')),
+    },
+    '/server/list/detail/:id': {
+      component: dynamicWrapper(app, [], () => import('../routes/Server/ServerListDetail')),
+      name: '详情',
+    },
+    // 异常页面
     '/exception/403': {
       component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
     },

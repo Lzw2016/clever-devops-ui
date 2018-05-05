@@ -16,17 +16,17 @@ const menuData = [
       {
         name: '服务代码仓库',
         icon: 'IconRepository',
-        path: 'repository',
+        path: 'repository/:list',
       },
       {
         name: '服务配置',
         icon: 'fuwuqipeizhiwenjian',
-        path: 'config',
+        path: 'config/:list',
       },
       {
         name: '服务列表',
         icon: 'fuwuliebiao',
-        path: 'list',
+        path: 'list/:list',
       },
     ],
   },
@@ -77,25 +77,25 @@ const menuData = [
       },
     ],
   },
-  {
-    name: '异常页',
-    icon: 'warning',
-    path: 'exception',
-    children: [
-      {
-        name: '403',
-        path: '403',
-      },
-      {
-        name: '404',
-        path: '404',
-      },
-      {
-        name: '500',
-        path: '500',
-      },
-    ],
-  },
+  // {
+  //   name: '异常页',
+  //   icon: 'warning',
+  //   path: 'exception',
+  //   children: [
+  //     {
+  //       name: '403',
+  //       path: '403',
+  //     },
+  //     {
+  //       name: '404',
+  //       path: '404',
+  //     },
+  //     {
+  //       name: '500',
+  //       path: '500',
+  //     },
+  //   ],
+  // },
 ];
 
 function formatter(data, parentPath = '/', parentAuthority) {
