@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { findCodeRepository, deleteRepository, testConnect } from '../services/CodeRepositoryApi';
+import { findCodeRepository, deleteRepository, testConnect, addCodeRepository } from '../services/CodeRepositoryApi';
 import { ModelInitState } from '../utils/constant';
 
 export default {
@@ -19,6 +19,10 @@ export default {
     pagination: {
       ...ModelInitState.pagination,
     },
+    editCodeRepositoryShow: false,
+    editCodeRepositoryData: null,
+    addCodeRepositoryShow: false,
+    addCodeRepositoryData: null,
   },
 
   effects: {
@@ -50,6 +54,19 @@ export default {
       yield put({ type: 'save', payload: { pageLoading: false } });
       if (response) {
         message.success(`连接[ ${params.repositoryUrl} ]成功`);
+      }
+    },
+    *addCodeRepository({ payload }, { select, call, put }) {
+      let addCodeRepositoryData = yield select(state => state.CodeRepositoryModel.addCodeRepositoryData);
+      addCodeRepositoryData = { ...addCodeRepositoryData, ...payload };
+      yield put({ type: 'save', payload: { addCodeRepositoryData } });
+      // 请求数据
+      const response = yield call(addCodeRepository, addCodeRepositoryData);
+      if (response) {
+        yield put({ type: 'save', payload: { addCodeRepositoryData: null, addCodeRepositoryShow: false } });
+        message.success(`新增成功 -> [${addCodeRepositoryData.projectName}]`)
+        // 重新加载数据
+        yield put({ type: 'findCodeRepository' });
       }
     },
   },

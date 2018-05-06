@@ -3,6 +3,7 @@ import { Card, Form, Table, Divider, Popconfirm, Spin, Row, Select, Input, Butto
 import { connect } from 'dva';
 import { Link } from 'dva/router';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import CodeRepositoryAdd from './CodeRepositoryAdd';
 import { AuthorizationTypeMapper, LanguageMapper, RepositoryTypeMapper, LanguageArray, RepositoryTypeArray, AuthorizationTypeArray } from '../../utils/enum';
 // import classNames from 'classnames';
 import styles from './CodeRepository.less'
@@ -10,6 +11,7 @@ import styles from './CodeRepository.less'
 @connect(({ CodeRepositoryModel, loading }) => ({
   CodeRepositoryModel,
   quetyLoading: loading.effects['CodeRepositoryModel/findCodeRepository'],
+  addLoading: loading.effects['CodeRepositoryModel/addCodeRepository'],
 }))
 @Form.create()
 export default class CodeRepository extends PureComponent {
@@ -72,16 +74,44 @@ export default class CodeRepository extends PureComponent {
               </Select>
             )}
           </Form.Item>
-          <Form.Item className={styles.formItemButton}>
+          <Form.Item>
             <Button type="primary" htmlType="submit">查询</Button>
+            <span className={styles.spanWidth16} />
+            <Button type="primary" onClick={this.addCodeRepositoryShow}>新增</Button>
           </Form.Item>
         </Row>
       </Form >
     );
   }
 
+  // 新增 - 保存表单
+  saveAddFormRef = (addFormRef) => {
+    this.addFormRef = addFormRef;
+  }
+
+  // 新增 - 显示
+  addCodeRepositoryShow = () => {
+    const { dispatch } = this.props;
+    dispatch({ type: 'CodeRepositoryModel/save', payload: { addCodeRepositoryShow: true } });
+  }
+
+  // 新增 - 隐藏
+  addCodeRepositoryHide = () => {
+    const { dispatch } = this.props;
+    dispatch({ type: 'CodeRepositoryModel/save', payload: { addCodeRepositoryShow: false } });
+  }
+
+  // 新增 - 确定新增
+  addCodeRepository = () => {
+    const { props: { dispatch }, addFormRef: { props: { form } } } = this;
+    form.validateFields((err, values) => {
+      if (err) return;
+      dispatch({ type: 'CodeRepositoryModel/addCodeRepository', payload: { ...values } });
+    });
+  }
+
   render() {
-    const { dispatch, CodeRepositoryModel, quetyLoading } = this.props;
+    const { dispatch, CodeRepositoryModel, quetyLoading, addLoading } = this.props;
     // 表格数据列配置
     const columns = [
       { title: '项目名称', dataIndex: 'projectName', key: 'projectName', render: (val, record) => (<Link to={`/server/repository/detail/${record.id}`}>{val}</Link>) },
@@ -125,6 +155,14 @@ export default class CodeRepository extends PureComponent {
             />
           </Card>
         </Spin>
+        <CodeRepositoryAdd
+          wrappedComponentRef={this.saveAddFormRef}
+          merchantData={CodeRepositoryModel.addCodeRepositoryData}
+          visible={CodeRepositoryModel.addCodeRepositoryShow}
+          confirmLoading={addLoading}
+          onCancel={this.addCodeRepositoryHide}
+          onCreate={this.addCodeRepository}
+        />
       </PageHeaderLayout>
     );
   }
