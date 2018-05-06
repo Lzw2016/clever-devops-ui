@@ -28,8 +28,25 @@ const ApiPathConfig = {
   suffix: '.json',
 };
 
+const ModelInitState = {
+  queryParam: { pageSize: 10, pageNo: 1 },
+  pagination: {
+    defaultCurrent: 1,
+    defaultPageSize: 10,
+    hideOnSinglePage: false,
+    pageSizeOptions: ['10', '30', '50', '100'],
+    showSizeChanger: true,
+    showQuickJumper: true,
+    showTotal: total => `总记录数${total}条`,
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  },
+}
+
 export {
   SystemInfo,
   CodeMessage,
   ApiPathConfig,
+  ModelInitState,
 };

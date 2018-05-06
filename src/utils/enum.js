@@ -1,10 +1,17 @@
 // 项目语言(如 Java Node Go PHP)
 const LanguageArray = [
   { value: 'Java', label: 'Java' },
-  { value: 'Node', label: 'Node' },
+  { value: 'NodeJS', label: 'NodeJS' },
   { value: 'Go', label: 'Go' },
   { value: 'PHP', label: 'PHP' },
 ];
+
+const LanguageMapper = {
+  'Java': { label: 'Java' },
+  'NodeJS': { label: 'NodeJS' },
+  'Go': { label: 'Go' },
+  'PHP': { label: 'PHP' },
+};
 
 // 代码仓库版本管理方式(如 GIT SVN)
 const RepositoryTypeArray = [
@@ -12,11 +19,21 @@ const RepositoryTypeArray = [
   { value: 'SVN', label: 'SVN' },
 ];
 
+const RepositoryTypeMapper = {
+  'GIT': { label: 'GIT' },
+  'SVN': { label: 'SVN' },
+};
+
 // 代码仓库授权类型(0：不需要授权；1：用户名密码；)
 const AuthorizationTypeArray = [
   { value: '0', label: '不需要授权' },
   { value: '1', label: '用户名密码' },
 ];
+
+const AuthorizationTypeMapper = {
+  '0': { label: '不需要授权' },
+  '1': { label: '用户名密码' },
+};
 
 // 代码编译方式(Maven npm go)
 const BuildTypeArray = [
@@ -36,8 +53,11 @@ const BuildStateArray = [
 
 export {
   LanguageArray,
+  LanguageMapper,
   RepositoryTypeArray,
+  RepositoryTypeMapper,
   AuthorizationTypeArray,
+  AuthorizationTypeMapper,
   BuildTypeArray,
   BuildStateArray,
 };

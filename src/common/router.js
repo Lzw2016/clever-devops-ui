@@ -79,7 +79,7 @@ export const getRouterData = app => {
       // authority: 'admin',
     },
     '/server/repository/:list': {
-      component: dynamicWrapper(app, [], () => import('../routes/Server/CodeRepository')),
+      component: dynamicWrapper(app, ['CodeRepositoryModel'], () => import('../routes/Server/CodeRepository')),
     },
     '/server/repository/detail/:id': {
       component: dynamicWrapper(app, [], () => import('../routes/Server/CodeRepositoryDetail')),
