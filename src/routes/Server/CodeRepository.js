@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import { Link } from 'dva/router';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import CodeRepositoryAdd from './CodeRepositoryAdd';
+import CodeRepositoryUpdate from './CodeRepositoryUpdate';
 import { AuthorizationTypeMapper, LanguageMapper, RepositoryTypeMapper, LanguageArray, RepositoryTypeArray, AuthorizationTypeArray } from '../../utils/enum';
 // import classNames from 'classnames';
 import styles from './CodeRepository.less'
@@ -12,6 +13,7 @@ import styles from './CodeRepository.less'
   CodeRepositoryModel,
   quetyLoading: loading.effects['CodeRepositoryModel/findCodeRepository'],
   addLoading: loading.effects['CodeRepositoryModel/addCodeRepository'],
+  updateLoading: loading.effects['CodeRepositoryModel/updateCodeRepository'],
 }))
 @Form.create()
 export default class CodeRepository extends PureComponent {
@@ -110,8 +112,34 @@ export default class CodeRepository extends PureComponent {
     });
   }
 
+  // 编辑 - 保存表单
+  saveUpdateFormRef = (updateFormRef) => {
+    this.updateFormRef = updateFormRef;
+  }
+
+  // 编辑 - 显示
+  editCodeRepositoryShow = (row) => {
+    const { dispatch } = this.props;
+    dispatch({ type: 'CodeRepositoryModel/save', payload: { editCodeRepositoryData: row, editCodeRepositoryShow: true } });
+  }
+
+  // 编辑 - 隐藏
+  editCodeRepositoryHide = () => {
+    const { dispatch } = this.props;
+    dispatch({ type: 'CodeRepositoryModel/save', payload: { editCodeRepositoryShow: false } });
+  }
+
+  // 编辑 - 确定更新
+  updateCodeRepository = () => {
+    const { props: { dispatch }, updateFormRef: { props: { form } } } = this;
+    form.validateFields((err, values) => {
+      if (err) return;
+      dispatch({ type: 'CodeRepositoryModel/updateCodeRepository', payload: { ...values } });
+    });
+  }
+
   render() {
-    const { dispatch, CodeRepositoryModel, quetyLoading, addLoading } = this.props;
+    const { dispatch, CodeRepositoryModel, quetyLoading, addLoading, updateLoading } = this.props;
     // 表格数据列配置
     const columns = [
       { title: '项目名称', dataIndex: 'projectName', key: 'projectName', render: (val, record) => (<Link to={`/server/repository/detail/${record.id}`}>{val}</Link>) },
@@ -125,7 +153,7 @@ export default class CodeRepository extends PureComponent {
         align: 'center',
         render: (val, record) => (
           <div>
-            <a onClick={() => this.setUpdateCodeRepositoryModalShow(true, record)}>编辑</a>
+            <a onClick={() => this.editCodeRepositoryShow(record)}>编辑</a>
             <Divider type="vertical" />
             <Popconfirm title="确定删除当前数据?" onConfirm={() => dispatch({ type: 'CodeRepositoryModel/deleteRepository', payload: record })} onCancel={null}>
               <a>删除</a>
@@ -157,11 +185,19 @@ export default class CodeRepository extends PureComponent {
         </Spin>
         <CodeRepositoryAdd
           wrappedComponentRef={this.saveAddFormRef}
-          merchantData={CodeRepositoryModel.addCodeRepositoryData}
+          CodeRepositoryData={CodeRepositoryModel.addCodeRepositoryData}
           visible={CodeRepositoryModel.addCodeRepositoryShow}
           confirmLoading={addLoading}
           onCancel={this.addCodeRepositoryHide}
           onCreate={this.addCodeRepository}
+        />
+        <CodeRepositoryUpdate
+          wrappedComponentRef={this.saveUpdateFormRef}
+          CodeRepositoryData={CodeRepositoryModel.editCodeRepositoryData}
+          visible={CodeRepositoryModel.editCodeRepositoryShow}
+          confirmLoading={updateLoading}
+          onCancel={this.editCodeRepositoryHide}
+          onCreate={this.updateCodeRepository}
         />
       </PageHeaderLayout>
     );
