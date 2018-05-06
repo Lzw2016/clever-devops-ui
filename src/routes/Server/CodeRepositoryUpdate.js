@@ -10,7 +10,7 @@ export default class CodeRepositoryUpdate extends PureComponent {
     const { CodeRepositoryData, visible, confirmLoading, onCancel, onCreate, form } = this.props;
     const { getFieldDecorator } = form;
     return (
-      <Modal width={600} visible={visible} confirmLoading={confirmLoading} title="更新项目仓库配置" okText="更新" onCancel={onCancel} onOk={onCreate} maskClosable={false} >
+      <Modal width={600} visible={visible} confirmLoading={confirmLoading} title="编辑服务代码仓库" okText="更新" onCancel={onCancel} onOk={onCreate} maskClosable={false} >
         <Form layout="inline" className={styles.form}>
           <Row gutter={{ md: 12, lg: 12, xl: 12 }}>
             <Form.Item label="项目名称">

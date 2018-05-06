@@ -109,6 +109,7 @@ export default class CodeRepository extends PureComponent {
     form.validateFields((err, values) => {
       if (err) return;
       dispatch({ type: 'CodeRepositoryModel/addCodeRepository', payload: { ...values } });
+      form.resetFields();
     });
   }
 
@@ -135,6 +136,7 @@ export default class CodeRepository extends PureComponent {
     form.validateFields((err, values) => {
       if (err) return;
       dispatch({ type: 'CodeRepositoryModel/updateCodeRepository', payload: { ...values } });
+      form.resetFields();
     });
   }
 
