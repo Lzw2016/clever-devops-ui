@@ -23,7 +23,13 @@ const CodeMessage = {
   504: '网关超时。',
 };
 
+const ApiPathConfig = {
+  prefix: '/api/devops',
+  suffix: '.json',
+};
+
 export {
   SystemInfo,
   CodeMessage,
+  ApiPathConfig,
 };
