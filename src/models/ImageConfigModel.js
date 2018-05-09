@@ -27,8 +27,8 @@ export default {
     pagination: {
       ...ModelInitState.pagination,
     },
-    // editCodeRepositoryShow: false,
-    // editCodeRepositoryData: null,
+    editImageConfigShow: false,
+    editImageConfigData: null,
     // addCodeRepositoryShow: false,
     // addCodeRepositoryData: null,
   },

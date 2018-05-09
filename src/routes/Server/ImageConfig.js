@@ -3,6 +3,8 @@ import { connect } from 'dva';
 import { Link } from 'dva/router';
 import { Spin, Card, Form, Table, Divider, Popconfirm, Row, Input, Select, Button, Badge, Popover } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+// import CodeRepositoryAdd from './CodeRepositoryAdd';
+import ImageConfigUpdate from './ImageConfigUpdate';
 import { LanguageMapper, LanguageArray, RepositoryTypeArray, RepositoryTypeMapper, BuildStateArray, BuildTypeArray, BuildStateMapper, AuthorizationTypeMapper } from '../../utils/enum';
 // import classNames from 'classnames';
 import styles from './ImageConfig.less'
@@ -126,6 +128,34 @@ export default class ImageConfig extends PureComponent {
     );
   }
 
+  // 编辑 - 保存表单
+  saveUpdateFormRef = (updateFormRef) => {
+    this.updateFormRef = updateFormRef;
+  }
+
+  // 编辑 - 显示
+  editImageConfigShow = (row) => {
+    const { props: { dispatch }, updateFormRef: { props: { form } } } = this;
+    form.resetFields();
+    dispatch({ type: 'ImageConfigModel/save', payload: { editImageConfigData: row, editImageConfigShow: true } });
+  }
+
+  // 编辑 - 隐藏
+  editImageConfigHide = () => {
+    const { dispatch } = this.props;
+    dispatch({ type: 'ImageConfigModel/save', payload: { editImageConfigShow: false } });
+  }
+
+  // 编辑 - 确定更新
+  updateImageConfig = () => {
+    const { props: { dispatch }, updateFormRef: { props: { form } } } = this;
+    form.validateFields((err, values) => {
+      if (err) return;
+      dispatch({ type: 'ImageConfigModel/updateImageConfig', payload: { ...values } });
+      form.resetFields();
+    });
+  }
+
   render() {
     const { dispatch, ImageConfigModel, quetyLoading, addLoading, updateLoading } = this.props;
     // 表格数据列配置
@@ -157,7 +187,9 @@ export default class ImageConfig extends PureComponent {
               </div>
               <div>
                 <span className={styles.colLabel}>代码地址:</span>
-                <span className={styles.colValue}>{record.repositoryUrl}</span>
+                <span className={styles.colValue}>
+                  <a target='_blank' href={record.repositoryUrl}>{record.repositoryUrl}</a>
+                </span>
               </div>
               <div>
                 <span className={styles.colLabel}>访问授权:</span>
@@ -207,7 +239,7 @@ export default class ImageConfig extends PureComponent {
         align: 'center',
         render: (val, record) => (
           <div>
-            <a onClick={() => this.editCodeRepositoryShow(record)}>编辑</a>
+            <a onClick={() => this.editImageConfigShow(record)}>编辑</a>
             <Divider type="vertical" />
             <Popconfirm title="确定删除当前数据?" onConfirm={() => dispatch({ type: 'ImageConfigModel/deleteImageConfig', payload: record })} onCancel={null}>
               <a>删除</a>
@@ -237,6 +269,14 @@ export default class ImageConfig extends PureComponent {
             />
           </Card>
         </Spin>
+        <ImageConfigUpdate
+          wrappedComponentRef={this.saveUpdateFormRef}
+          ImageConfigData={ImageConfigModel.editImageConfigData}
+          visible={ImageConfigModel.editImageConfigShow}
+          confirmLoading={updateLoading}
+          onCancel={this.editImageConfigHide}
+          onCreate={this.updateImageConfig}
+        />
       </PageHeaderLayout>
     );
   }
