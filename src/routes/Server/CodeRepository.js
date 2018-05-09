@@ -93,7 +93,8 @@ export default class CodeRepository extends PureComponent {
 
   // 新增 - 显示
   addCodeRepositoryShow = () => {
-    const { dispatch } = this.props;
+    const { props: { dispatch }, addFormRef: { props: { form } } } = this;
+    form.resetFields();
     dispatch({ type: 'CodeRepositoryModel/save', payload: { addCodeRepositoryShow: true } });
   }
 
@@ -120,7 +121,8 @@ export default class CodeRepository extends PureComponent {
 
   // 编辑 - 显示
   editCodeRepositoryShow = (row) => {
-    const { dispatch } = this.props;
+    const { props: { dispatch }, updateFormRef: { props: { form } } } = this;
+    form.resetFields();
     dispatch({ type: 'CodeRepositoryModel/save', payload: { editCodeRepositoryData: row, editCodeRepositoryShow: true } });
   }
 
