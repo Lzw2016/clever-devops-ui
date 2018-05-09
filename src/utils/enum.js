@@ -11,6 +11,7 @@ const LanguageMapper = {
   'NodeJS': { label: 'NodeJS' },
   'Go': { label: 'Go' },
   'PHP': { label: 'PHP' },
+  error: { label: '未知' },
 };
 
 // 代码仓库版本管理方式(如 GIT SVN)
@@ -22,6 +23,7 @@ const RepositoryTypeArray = [
 const RepositoryTypeMapper = {
   'GIT': { label: 'GIT' },
   'SVN': { label: 'SVN' },
+  error: { label: '未知' },
 };
 
 // 代码仓库授权类型(0：不需要授权；1：用户名密码；)
@@ -33,6 +35,7 @@ const AuthorizationTypeArray = [
 const AuthorizationTypeMapper = {
   '0': { label: '不需要授权' },
   '1': { label: '用户名密码' },
+  error: { label: '未知' },
 };
 
 // 代码编译方式(Maven npm go)
@@ -50,6 +53,15 @@ const BuildStateArray = [
   { value: 'S', label: '构建成功' },
   { value: 'F', label: '构建失败' },
 ];
+const BuildStateMapper = {
+  '0': { label: '未构建', badgeStatus: 'default' },
+  '1': { label: '正在下载代码', badgeStatus: 'processing' },
+  '2': { label: '正在编译代码', badgeStatus: 'processing' },
+  '3': { label: '正在构建镜像', badgeStatus: 'processing' },
+  'S': { label: '构建成功', badgeStatus: 'success' },
+  'F': { label: '构建失败', badgeStatus: 'warning' },
+  error: { label: '未知', badgeStatus: 'error' },
+};
 
 export {
   LanguageArray,
@@ -60,4 +72,5 @@ export {
   AuthorizationTypeMapper,
   BuildTypeArray,
   BuildStateArray,
+  BuildStateMapper,
 };

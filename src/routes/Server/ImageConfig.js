@@ -1,16 +1,242 @@
 import React, { PureComponent } from 'react';
-import { Card } from 'antd';
+import { connect } from 'dva';
+import { Link } from 'dva/router';
+import { Spin, Card, Form, Table, Divider, Popconfirm, Row, Input, Select, Button, Badge, Popover } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import { LanguageMapper, LanguageArray, RepositoryTypeArray, RepositoryTypeMapper, BuildStateArray, BuildTypeArray, BuildStateMapper, AuthorizationTypeMapper } from '../../utils/enum';
 // import classNames from 'classnames';
-// import styles from './ImageConfig.less'
+import styles from './ImageConfig.less'
 
+@connect(({ ImageConfigModel, loading }) => ({
+  ImageConfigModel,
+  quetyLoading: loading.effects['ImageConfigModel/findImageConfig'],
+  addLoading: loading.effects['ImageConfigModel/addImageConfig'],
+  updateLoading: loading.effects['ImageConfigModel/updateImageConfig'],
+}))
+@Form.create()
 export default class ImageConfig extends PureComponent {
+
+  // 数据初始化
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch({ type: 'ImageConfigModel/findImageConfig' });
+  }
+
+  // 查询数据
+  findImageConfig = (e) => {
+    e.preventDefault();
+    const { dispatch, form } = this.props;
+    form.validateFields((err, formValues) => {
+      if (err) return;
+      dispatch({ type: 'ImageConfigModel/findImageConfig', payload: { ...formValues, pageNo: 0 } });
+    });
+  }
+
+  // 表格数据过滤或跳页
+  handleTableChange = (pagination, filtersArg, sorter) => {
+    const { dispatch, ImageConfigModel } = this.props;
+    const queryParam = { ...ImageConfigModel.queryParam, pageNo: pagination.current, pageSize: pagination.pageSize };
+    if (sorter.field) {
+      queryParam.sorter = `${sorter.field}_${sorter.order}`;
+    }
+    dispatch({ type: 'ImageConfigModel/findImageConfig', payload: queryParam });
+  }
+
+  // 查询表单
+  queryForm() {
+    const { form: { getFieldDecorator }, ImageConfigModel: { queryParam } } = this.props;
+    return (
+      <Form onSubmit={this.findImageConfig} layout="inline" className={styles.queryForm}>
+        <Row gutter={{ md: 0, lg: 0, xl: 0 }}>
+          <Form.Item label="项目名称">
+            {getFieldDecorator('projectName', { initialValue: queryParam.projectName })(
+              <Input placeholder="项目名称(模糊匹配)" />
+            )}
+          </Form.Item>
+          <Form.Item label="项目语言">
+            {getFieldDecorator('language', { initialValue: queryParam.language })(
+              <Select placeholder="项目语言" allowClear={true}>
+                {LanguageArray.map(item => (<Select.Option key={item.value} value={item.value}>{item.label}</Select.Option>))}
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item label="仓库类型">
+            {getFieldDecorator('repositoryType', { initialValue: queryParam.repositoryType })(
+              <Select placeholder="仓库类型" allowClear={true}>
+                {RepositoryTypeArray.map(item => (<Select.Option key={item.value} value={item.value}>{item.label}</Select.Option>))}
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item label="代码地址">
+            {getFieldDecorator('repositoryUrl', { initialValue: queryParam.repositoryUrl })(
+              <Input placeholder="代码地址(模糊匹配)" />
+            )}
+          </Form.Item>
+        </Row>
+        <Row gutter={{ md: 0, lg: 0, xl: 0 }}>
+          <Form.Item label="代码分支">
+            {getFieldDecorator('branch', { initialValue: queryParam.branch })(
+              <Input placeholder="代码分支(模糊匹配)" />
+            )}
+          </Form.Item>
+          <Form.Item label="代码CommitID">
+            {getFieldDecorator('commitId', { initialValue: queryParam.commitId })(
+              <Input placeholder="代码CommitID" />
+            )}
+          </Form.Item>
+          <Form.Item label="编译方式">
+            {getFieldDecorator('buildType', { initialValue: queryParam.buildType })(
+              <Select placeholder="编译方式" allowClear={true}>
+                {BuildTypeArray.map(item => (<Select.Option key={item.value} value={item.value}>{item.label}</Select.Option>))}
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item label="编译脚本">
+            {getFieldDecorator('buildCmd', { initialValue: queryParam.buildCmd })(
+              <Input placeholder="编译脚本(模糊匹配)" />
+            )}
+          </Form.Item>
+        </Row>
+        <Row gutter={{ md: 0, lg: 0, xl: 0 }}>
+          <Form.Item label="构建状态">
+            {getFieldDecorator('buildState', { initialValue: queryParam.buildState })(
+              <Select placeholder="构建状态" allowClear={true}>
+                {BuildStateArray.map(item => (<Select.Option key={item.value} value={item.value}>{item.label}</Select.Option>))}
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item label="服务地址">
+            {getFieldDecorator('serverUrl', { initialValue: queryParam.serverUrl })(
+              <Input placeholder="服务地址(模糊匹配)" />
+            )}
+          </Form.Item>
+          <Form.Item label="服务端口">
+            {getFieldDecorator('serverPorts', { initialValue: queryParam.serverPorts })(
+              <Input placeholder="服务端口(模糊匹配)" />
+            )}
+          </Form.Item>
+          <Form.Item>
+            <span className={styles.spanWidth25} />
+            <Button type="primary" htmlType="submit">查询</Button>
+            <span className={styles.spanWidth16} />
+            <Button type="primary" onClick={this.addCodeRepositoryShow}>新增</Button>
+          </Form.Item>
+        </Row>
+      </Form >
+    );
+  }
+
   render() {
+    const { dispatch, ImageConfigModel, quetyLoading, addLoading, updateLoading } = this.props;
+    // 表格数据列配置
+    const columns = [
+      {
+        title: '项目名称', dataIndex: 'projectName', render: (val, record) => {
+          let language = LanguageMapper[`${record.language}`];
+          if (!language) language = LanguageMapper.error;
+          let repositoryType = RepositoryTypeMapper[`${record.repositoryType}`];
+          if (!repositoryType) repositoryType = RepositoryTypeMapper.error;
+          let authorizationType = AuthorizationTypeMapper[`${record.authorizationType}`];
+          if (!authorizationType) authorizationType = AuthorizationTypeMapper.error;
+          const content = (
+            <div>
+              <div>
+                <div className={styles.rowLabelCenter}>点击连接查看项目详情</div>
+              </div>
+              <div>
+                <span className={styles.colLabel}>项目名称:</span>
+                <span className={styles.colValue}>{record.projectName}</span>
+              </div>
+              <div>
+                <span className={styles.colLabel}>项目语言:</span>
+                <span className={styles.colValue}>{language.label}</span>
+              </div>
+              <div>
+                <span className={styles.colLabel}>仓库类型:</span>
+                <span className={styles.colValue}>{repositoryType.label}</span>
+              </div>
+              <div>
+                <span className={styles.colLabel}>代码地址:</span>
+                <span className={styles.colValue}>{record.repositoryUrl}</span>
+              </div>
+              <div>
+                <span className={styles.colLabel}>访问授权:</span>
+                <span className={styles.colValue}>{authorizationType.label}</span>
+              </div>
+              <div>
+                <span className={styles.colLabel}>创建时间:</span>
+                <span className={styles.colValue}>{record.createDate}</span>
+              </div>
+            </div>
+          );
+          return (
+            <Popover content={content} placement="right">
+              <Link to={`/server/repository/detail/${record.repositoryId}`}>{val}</Link>
+            </Popover>
+          )
+        },
+      },
+      { title: '服务域名', dataIndex: 'serverUrl', render: val => <a target='_blank' href={`http://${val}`}>{val}</a> },
+      { title: '服务端口', dataIndex: 'serverPorts' },
+      { title: '默认运行数', dataIndex: 'serverCount' },
+      {
+        title: '项目语言', dataIndex: 'language', render: val => {
+          let language = LanguageMapper[`${val}`];
+          if (!language) {
+            language = LanguageMapper.error;
+          }
+          return language.label;
+        },
+      },
+      { title: '代码分支', dataIndex: 'branch' },
+      { title: '编译方式', dataIndex: 'buildType' },
+      { title: 'Dockerfile', dataIndex: 'dockerFilePath' },
+      {
+        title: '构建状态', dataIndex: 'buildState', render: val => {
+          let buildState = BuildStateMapper[`${val}`];
+          if (!buildState) {
+            buildState = BuildStateMapper.error;
+          }
+          return <Badge status={buildState.badgeStatus} text={buildState.label} />;
+        },
+      },
+      { title: '上次构建时间', dataIndex: 'buildEndTime' },
+      {
+        title: '操作',
+        key: 'action',
+        align: 'center',
+        render: (val, record) => (
+          <div>
+            <a onClick={() => this.editCodeRepositoryShow(record)}>编辑</a>
+            <Divider type="vertical" />
+            <Popconfirm title="确定删除当前数据?" onConfirm={() => dispatch({ type: 'ImageConfigModel/deleteImageConfig', payload: record })} onCancel={null}>
+              <a>删除</a>
+            </Popconfirm>
+            <Divider type="vertical" />
+            <Link to={`/server/config/detail/${record.id}`}>详情</Link>
+          </div>
+        ),
+      },
+    ];
     return (
       <PageHeaderLayout>
-        <Card bordered={false}>
-          ImageConfig
-        </Card>
+        <Spin size='large' delay={100} spinning={ImageConfigModel.pageLoading}>
+          <Card bordered={false}>
+            <div>
+              {this.queryForm()}
+            </div>
+            <Table
+              size="middle"
+              bordered={true}
+              rowKey={record => record.id}
+              columns={columns}
+              loading={quetyLoading}
+              dataSource={ImageConfigModel.data}
+              pagination={ImageConfigModel.pagination}
+              onChange={this.handleTableChange}
+            />
+          </Card>
+        </Spin>
       </PageHeaderLayout>
     );
   }

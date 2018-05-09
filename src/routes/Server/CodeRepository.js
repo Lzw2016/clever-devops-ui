@@ -144,15 +144,16 @@ export default class CodeRepository extends PureComponent {
     const { dispatch, CodeRepositoryModel, quetyLoading, addLoading, updateLoading } = this.props;
     // 表格数据列配置
     const columns = [
-      { title: '项目名称', dataIndex: 'projectName', key: 'projectName', render: (val, record) => (<Link to={`/server/repository/detail/${record.id}`}>{val}</Link>) },
-      { title: '项目语言', dataIndex: 'language', key: 'language', render: val => LanguageMapper[val].label },
-      { title: '仓库类型', dataIndex: 'repositoryType', key: 'repositoryType', render: val => RepositoryTypeMapper[val].label },
-      { title: '代码仓库地址', dataIndex: 'repositoryUrl', key: 'repositoryUrl', render: val => <a target="_blank" href={val}>{val}</a> },
-      { title: '访问授权', dataIndex: 'authorizationType', key: 'authorizationType', render: val => AuthorizationTypeMapper[val].label },
-      { title: '创建时间', dataIndex: 'createDate', key: 'createDate' },
+      { title: '项目名称', dataIndex: 'projectName', render: (val, record) => (<Link to={`/server/repository/detail/${record.id}`}>{val}</Link>) },
+      { title: '项目语言', dataIndex: 'language', render: val => LanguageMapper[val].label },
+      { title: '仓库类型', dataIndex: 'repositoryType', render: val => RepositoryTypeMapper[val].label },
+      { title: '代码仓库地址', dataIndex: 'repositoryUrl', render: val => <a target="_blank" href={val}>{val}</a> },
+      { title: '访问授权', dataIndex: 'authorizationType', render: val => AuthorizationTypeMapper[val].label },
+      { title: '创建时间', dataIndex: 'createDate' },
       {
         title: '操作',
         align: 'center',
+        key: 'action',
         render: (val, record) => (
           <div>
             <a onClick={() => this.editCodeRepositoryShow(record)}>编辑</a>

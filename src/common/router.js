@@ -86,7 +86,7 @@ export const getRouterData = app => {
       name: '详情',
     },
     '/server/config/:list': {
-      component: dynamicWrapper(app, [], () => import('../routes/Server/ImageConfig')),
+      component: dynamicWrapper(app, ['ImageConfigModel'], () => import('../routes/Server/ImageConfig')),
     },
     '/server/config/detail/:id': {
       component: dynamicWrapper(app, [], () => import('../routes/Server/ImageConfigDetail')),
