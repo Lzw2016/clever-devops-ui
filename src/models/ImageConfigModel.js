@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import { getGitBranch } from '../services/CodeRepositoryApi';
 import { findImageConfig, addImageConfig, updateImageConfig, deleteImageConfig } from '../services/ImageConfigApi';
 import { ModelInitState } from '../utils/constant';
 
@@ -28,9 +29,11 @@ export default {
       ...ModelInitState.pagination,
     },
     editImageConfigShow: false,
-    editImageConfigData: null,
-    // addCodeRepositoryShow: false,
-    // addCodeRepositoryData: null,
+    editImageConfigData: undefined,
+    editAllGitBranch: [],
+    addImageConfigShow: false,
+    addImageConfigData: {},
+    addAllGitBranch: [],
   },
 
   effects: {
@@ -68,18 +71,29 @@ export default {
         yield put({ type: 'findImageConfig' });
       }
     },
-    *updateImageConfig({ payload }, { select, call, put }) {
-      let editCodeRepositoryData = yield select(state => state.ImageConfigModel.editCodeRepositoryData);
-      editCodeRepositoryData = { ...editCodeRepositoryData, ...payload };
-      yield put({ type: 'save', payload: { editCodeRepositoryData } });
+    *updateImageConfig({ payload }, { call, put }) {
+      const editImageConfigData = { ...payload };
+      yield put({ type: 'save', payload: { editImageConfigData } });
       // 请求数据
-      const response = yield call(updateImageConfig, editCodeRepositoryData.id, editCodeRepositoryData);
+      const response = yield call(updateImageConfig, editImageConfigData.id, editImageConfigData);
       if (response) {
-        yield put({ type: 'save', payload: { editCodeRepositoryData: null, editCodeRepositoryShow: false } });
-        message.success(`新增成功 -> [${editCodeRepositoryData.projectName}]`)
+        yield put({ type: 'save', payload: { editImageConfigData: null, editImageConfigShow: false } });
+        message.success(`更新成功 -> [${editImageConfigData.serverUrl}]`)
         // 重新加载数据
         yield put({ type: 'findImageConfig' });
       }
+    },
+    *getEditAllGitBranch({ payload }, { call, put }) {
+      // 请求数据
+      const allGitBranch = yield call(getGitBranch, payload);
+      if (!allGitBranch) return;
+      yield put({ type: 'save', payload: { editAllGitBranch: allGitBranch } });
+    },
+    *getAddAllGitBranch({ payload }, { call, put }) {
+      // 请求数据
+      const allGitBranch = yield call(getGitBranch, payload);
+      if (!allGitBranch) return;
+      yield put({ type: 'save', payload: { addAllGitBranch: allGitBranch } });
     },
   },
 

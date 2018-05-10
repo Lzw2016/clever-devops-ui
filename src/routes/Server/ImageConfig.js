@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { Link } from 'dva/router';
 import { Spin, Card, Form, Table, Divider, Popconfirm, Row, Input, Select, Button, Badge, Popover } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-// import CodeRepositoryAdd from './CodeRepositoryAdd';
+import ImageConfigAdd from './ImageConfigAdd';
 import ImageConfigUpdate from './ImageConfigUpdate';
 import { LanguageMapper, LanguageArray, RepositoryTypeArray, RepositoryTypeMapper, BuildStateArray, BuildTypeArray, BuildStateMapper, AuthorizationTypeMapper } from '../../utils/enum';
 // import classNames from 'classnames';
@@ -13,7 +13,9 @@ import styles from './ImageConfig.less'
   ImageConfigModel,
   quetyLoading: loading.effects['ImageConfigModel/findImageConfig'],
   addLoading: loading.effects['ImageConfigModel/addImageConfig'],
+  getAddAllGitBranchLoading: loading.effects['ImageConfigModel/getAddAllGitBranch'],
   updateLoading: loading.effects['ImageConfigModel/updateImageConfig'],
+  getEditAllGitBranchLoading: loading.effects['ImageConfigModel/getEditAllGitBranch'],
 }))
 @Form.create()
 export default class ImageConfig extends PureComponent {
@@ -121,7 +123,7 @@ export default class ImageConfig extends PureComponent {
             <span className={styles.spanWidth25} />
             <Button type="primary" htmlType="submit">查询</Button>
             <span className={styles.spanWidth16} />
-            <Button type="primary" onClick={this.addCodeRepositoryShow}>新增</Button>
+            <Button type="primary" onClick={this.addImageConfigShow}>新增</Button>
           </Form.Item>
         </Row>
       </Form >
@@ -137,7 +139,9 @@ export default class ImageConfig extends PureComponent {
   editImageConfigShow = (row) => {
     const { props: { dispatch }, updateFormRef: { props: { form } } } = this;
     form.resetFields();
-    dispatch({ type: 'ImageConfigModel/save', payload: { editImageConfigData: row, editImageConfigShow: true } });
+    dispatch({ type: 'ImageConfigModel/save', payload: { editImageConfigData: row, editImageConfigShow: true, editAllGitBranch: [] } });
+    const { authorizationInfo, authorizationType, repositoryUrl } = row;
+    dispatch({ type: 'ImageConfigModel/getEditAllGitBranch', payload: { authorizationInfo, authorizationType, repositoryUrl } });
   }
 
   // 编辑 - 隐藏
@@ -148,16 +152,44 @@ export default class ImageConfig extends PureComponent {
 
   // 编辑 - 确定更新
   updateImageConfig = () => {
-    const { props: { dispatch }, updateFormRef: { props: { form } } } = this;
+    const { props: { dispatch, ImageConfigModel: { editImageConfigData } }, updateFormRef: { props: { form } } } = this;
     form.validateFields((err, values) => {
       if (err) return;
-      dispatch({ type: 'ImageConfigModel/updateImageConfig', payload: { ...values } });
+      dispatch({ type: 'ImageConfigModel/updateImageConfig', payload: { ...values, id: editImageConfigData.id } });
+      form.resetFields();
+    });
+  }
+
+  // 新增 - 保存表单
+  saveAddFormRef = (addFormRef) => {
+    this.addFormRef = addFormRef;
+  }
+
+  // 新增 - 显示
+  addImageConfigShow = () => {
+    const { props: { dispatch }, addFormRef: { props: { form } } } = this;
+    form.resetFields();
+    dispatch({ type: 'ImageConfigModel/save', payload: { addImageConfigShow: true } });
+  }
+
+  // 新增 - 隐藏
+  addImageConfigHide = () => {
+    const { dispatch } = this.props;
+    dispatch({ type: 'ImageConfigModel/save', payload: { addImageConfigShow: false } });
+  }
+
+  // 新增 - 确定新增
+  addImageConfig = () => {
+    const { props: { dispatch }, addFormRef: { props: { form } } } = this;
+    form.validateFields((err, values) => {
+      if (err) return;
+      dispatch({ type: 'ImageConfigModel/addImageConfig', payload: { ...values } });
       form.resetFields();
     });
   }
 
   render() {
-    const { dispatch, ImageConfigModel, quetyLoading, addLoading, updateLoading } = this.props;
+    const { dispatch, ImageConfigModel, quetyLoading, addLoading, getAddAllGitBranchLoading, updateLoading, getEditAllGitBranchLoading } = this.props;
     // 表格数据列配置
     const columns = [
       {
@@ -272,10 +304,22 @@ export default class ImageConfig extends PureComponent {
         <ImageConfigUpdate
           wrappedComponentRef={this.saveUpdateFormRef}
           ImageConfigData={ImageConfigModel.editImageConfigData}
+          allGitBranch={ImageConfigModel.editAllGitBranch}
+          getAllGitBranchLoading={getEditAllGitBranchLoading}
           visible={ImageConfigModel.editImageConfigShow}
           confirmLoading={updateLoading}
           onCancel={this.editImageConfigHide}
           onCreate={this.updateImageConfig}
+        />
+        <ImageConfigAdd
+          wrappedComponentRef={this.saveAddFormRef}
+          ImageConfigData={ImageConfigModel.addImageConfigData}
+          allGitBranch={ImageConfigModel.addAllGitBranch}
+          getAllGitBranchLoading={getAddAllGitBranchLoading}
+          visible={ImageConfigModel.addImageConfigShow}
+          confirmLoading={addLoading}
+          onCancel={this.addImageConfigHide}
+          onCreate={this.addImageConfig}
         />
       </PageHeaderLayout>
     );

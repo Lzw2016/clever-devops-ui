@@ -1,15 +1,22 @@
 import React, { PureComponent } from 'react';
 import { Modal, Form, Input, Row, Select, InputNumber, Spin } from 'antd';
 import { BuildTypeArray } from '../../utils/enum';
-import styles from './ImageConfigUpdate.less';
+import styles from './ImageConfigAdd.less';
 
 @Form.create()
-export default class ImageConfigUpdate extends PureComponent {
+export default class ImageConfigAdd extends PureComponent {
   render() {
     const { ImageConfigData, allGitBranch, getAllGitBranchLoading, visible, confirmLoading, onCancel, onCreate, form } = this.props;
     const { getFieldDecorator } = form;
+    // 设置默认值
+    if (ImageConfigData) {
+      if (!ImageConfigData.dockerFilePath) ImageConfigData.dockerFilePath = './Dockerfile';
+      if (!ImageConfigData.buildCmd) ImageConfigData.buildCmd = 'clean package -Dmaven.test.skip=true';
+      if (!ImageConfigData.serverCount) ImageConfigData.serverCount = 5;
+      if (!ImageConfigData.serverPorts) ImageConfigData.serverPorts = '9066';
+    }
     return (
-      <Modal width={600} visible={visible} confirmLoading={confirmLoading} title="编辑服务配置" okText="更新" onCancel={onCancel} onOk={onCreate} maskClosable={false} >
+      <Modal width={600} visible={visible} confirmLoading={confirmLoading} title="新增服务配置" okText="新增" onCancel={onCancel} onOk={onCreate} maskClosable={false} >
         <Form layout="inline" className={styles.form}>
           <Row gutter={{ md: 12, lg: 12, xl: 12 }}>
             <Form.Item label="项目名称">
@@ -17,7 +24,7 @@ export default class ImageConfigUpdate extends PureComponent {
                 initialValue: ImageConfigData ? ImageConfigData.projectName : undefined,
                 rules: [{ required: true, whitespace: true, message: '项目名称必填' }],
               })(
-                <Input placeholder="请输入" readOnly />
+                <Select placeholder="请输入" allowClear={true} />
               )}
             </Form.Item>
           </Row>
