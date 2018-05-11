@@ -1,12 +1,48 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'dva';
 import { Modal, Form, Input, Row, Select, InputNumber, Spin } from 'antd';
 import { BuildTypeArray } from '../../utils/enum';
 import styles from './ImageConfigAdd.less';
 
+@connect(({ ImageConfigModel, loading }) => ({
+  ImageConfigModel,
+  findCodeRepositoryLoading: loading.effects['ImageConfigModel/findCodeRepository'],
+  getAllGitBranchLoading: loading.effects['ImageConfigModel/getAddAllGitBranch'],
+}))
 @Form.create()
 export default class ImageConfigAdd extends PureComponent {
+
+  // 搜索项目名称
+  onSearchProjectName = (value) => {
+    const { dispatch, ImageConfigModel: { repositoryData } } = this.props;
+    if (value && value !== '' && value === repositoryData) return;
+    dispatch({ type: 'ImageConfigModel/findCodeRepository', payload: { projectName: value } });
+  };
+
+  // 选择项目
+  onChangeProjectName = (value, option) => {
+    const { dispatch, form: { setFields } } = this.props;
+    const { data } = option.props;
+    // 保存选择项目
+    dispatch({ type: 'ImageConfigModel/save', payload: { selectRepository: data } });
+    // 获取项目版本分支
+    setFields({ branch: { value: undefined } });
+    dispatch({ type: 'ImageConfigModel/getAddAllGitBranch', payload: { ...data } });
+  }
+
+  // 焦点离开
+  onBlurProjectName = () => {
+    const { dispatch, form: { setFields, getFieldValue }, ImageConfigModel: { selectRepository } } = this.props;
+    if (selectRepository && selectRepository.id && selectRepository.projectName && selectRepository.projectName === getFieldValue('projectName')) return;
+    setFields({ projectName: { value: undefined } });
+    dispatch({ type: 'ImageConfigModel/findCodeRepository', payload: { projectName: '' } });
+    setFields({ branch: { value: undefined } });
+    dispatch({ type: 'ImageConfigModel/save', payload: { addAllGitBranch: [] } });
+  }
+
   render() {
-    const { ImageConfigData, allGitBranch, getAllGitBranchLoading, visible, confirmLoading, onCancel, onCreate, form } = this.props;
+    const { ImageConfigData, visible, confirmLoading, onCancel, onCreate, form } = this.props;
+    const { ImageConfigModel: { repositoryData, addAllGitBranch }, findCodeRepositoryLoading, getAllGitBranchLoading } = this.props;
     const { getFieldDecorator } = form;
     // 设置默认值
     if (ImageConfigData) {
@@ -19,22 +55,33 @@ export default class ImageConfigAdd extends PureComponent {
       <Modal width={600} visible={visible} confirmLoading={confirmLoading} title="新增服务配置" okText="新增" onCancel={onCancel} onOk={onCreate} maskClosable={false} >
         <Form layout="inline" className={styles.form}>
           <Row gutter={{ md: 12, lg: 12, xl: 12 }}>
-            <Form.Item label="项目名称">
-              {getFieldDecorator('projectName', {
-                initialValue: ImageConfigData ? ImageConfigData.projectName : undefined,
-                rules: [{ required: true, whitespace: true, message: '项目名称必填' }],
-              })(
-                <Select placeholder="请输入" allowClear={true} />
-              )}
-            </Form.Item>
-          </Row>
-          <Row gutter={{ md: 12, lg: 12, xl: 12 }}>
             <Form.Item label="服务域名">
               {getFieldDecorator('serverUrl', {
                 initialValue: ImageConfigData ? ImageConfigData.serverUrl : undefined,
                 rules: [{ required: true, whitespace: true, message: '服务域名必填' }],
               })(
                 <Input placeholder="请输入" />
+              )}
+            </Form.Item>
+          </Row>
+          <Row gutter={{ md: 12, lg: 12, xl: 12 }}>
+            <Form.Item label="项目名称">
+              {getFieldDecorator('projectName', {
+                initialValue: ImageConfigData ? ImageConfigData.projectName : undefined,
+                rules: [{ required: true, whitespace: true, message: '项目名称必填' }],
+              })(
+                <Select
+                  mode="combobox"
+                  allowClear={true}
+                  placeholder="输入关键字搜索"
+                  notFoundContent={findCodeRepositoryLoading ? <Spin size="small" /> : '搜索不到项目'}
+                  filterOption={false}
+                  onSearch={this.onSearchProjectName}
+                  onChange={this.onChangeProjectName}
+                  onBlur={this.onBlurProjectName}
+                >
+                  {repositoryData.map(item => (<Select.Option key={item.id} value={item.projectName} data={item}>{item.projectName}</Select.Option>))}
+                </Select>
               )}
             </Form.Item>
           </Row>
@@ -46,12 +93,12 @@ export default class ImageConfigAdd extends PureComponent {
               })(
                 <Select placeholder="请选择" allowClear={true} showSearch={false} notFoundContent={getAllGitBranchLoading ? <Spin size="small" /> : null}>
                   <Select.OptGroup label="Branch">
-                    {allGitBranch
+                    {addAllGitBranch
                       .filter(item => item.branch.indexOf('refs/heads/') !== -1)
                       .map(item => (<Select.Option key={item.commitId} value={item.branch}>{item.branch}</Select.Option>))}
                   </Select.OptGroup>
                   <Select.OptGroup label="Tag">
-                    {allGitBranch
+                    {addAllGitBranch
                       .filter(item => item.branch.indexOf('refs/tags/') !== -1)
                       .map(item => (<Select.Option key={item.commitId} value={item.branch}>{item.branch}</Select.Option>))}
                   </Select.OptGroup>

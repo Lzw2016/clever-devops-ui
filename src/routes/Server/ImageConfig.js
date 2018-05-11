@@ -13,7 +13,6 @@ import styles from './ImageConfig.less'
   ImageConfigModel,
   quetyLoading: loading.effects['ImageConfigModel/findImageConfig'],
   addLoading: loading.effects['ImageConfigModel/addImageConfig'],
-  getAddAllGitBranchLoading: loading.effects['ImageConfigModel/getAddAllGitBranch'],
   updateLoading: loading.effects['ImageConfigModel/updateImageConfig'],
   getEditAllGitBranchLoading: loading.effects['ImageConfigModel/getEditAllGitBranch'],
 }))
@@ -167,8 +166,11 @@ export default class ImageConfig extends PureComponent {
 
   // 新增 - 显示
   addImageConfigShow = () => {
-    const { props: { dispatch }, addFormRef: { props: { form } } } = this;
+    const { props: { dispatch, ImageConfigModel: { repositoryData } }, addFormRef: { props: { form } } } = this;
     form.resetFields();
+    if (!repositoryData || repositoryData.length <= 0) {
+      dispatch({ type: 'ImageConfigModel/findCodeRepository', payload: { projectName: '' } });
+    }
     dispatch({ type: 'ImageConfigModel/save', payload: { addImageConfigShow: true } });
   }
 
@@ -189,7 +191,7 @@ export default class ImageConfig extends PureComponent {
   }
 
   render() {
-    const { dispatch, ImageConfigModel, quetyLoading, addLoading, getAddAllGitBranchLoading, updateLoading, getEditAllGitBranchLoading } = this.props;
+    const { dispatch, ImageConfigModel, quetyLoading, addLoading, updateLoading, getEditAllGitBranchLoading } = this.props;
     // 表格数据列配置
     const columns = [
       {
@@ -314,8 +316,6 @@ export default class ImageConfig extends PureComponent {
         <ImageConfigAdd
           wrappedComponentRef={this.saveAddFormRef}
           ImageConfigData={ImageConfigModel.addImageConfigData}
-          allGitBranch={ImageConfigModel.addAllGitBranch}
-          getAllGitBranchLoading={getAddAllGitBranchLoading}
           visible={ImageConfigModel.addImageConfigShow}
           confirmLoading={addLoading}
           onCancel={this.addImageConfigHide}

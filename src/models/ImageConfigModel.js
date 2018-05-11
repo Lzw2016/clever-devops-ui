@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { getGitBranch } from '../services/CodeRepositoryApi';
+import { getGitBranch, findCodeRepository } from '../services/CodeRepositoryApi';
 import { findImageConfig, addImageConfig, updateImageConfig, deleteImageConfig } from '../services/ImageConfigApi';
 import { ModelInitState } from '../utils/constant';
 
@@ -34,6 +34,13 @@ export default {
     addImageConfigShow: false,
     addImageConfigData: {},
     addAllGitBranch: [],
+    repositoryQueryParam: {
+      pageNo: 1,
+      pageSize: 15,
+      projectName: undefined,
+    },
+    repositoryData: [],
+    selectRepository: undefined,
   },
 
   effects: {
@@ -84,16 +91,32 @@ export default {
       }
     },
     *getEditAllGitBranch({ payload }, { call, put }) {
+      // 清空数据
+      yield put({ type: 'save', payload: { editAllGitBranch: [] } });
       // 请求数据
       const allGitBranch = yield call(getGitBranch, payload);
       if (!allGitBranch) return;
       yield put({ type: 'save', payload: { editAllGitBranch: allGitBranch } });
     },
     *getAddAllGitBranch({ payload }, { call, put }) {
+      // 清空数据
+      yield put({ type: 'save', payload: { addAllGitBranch: [] } });
       // 请求数据
       const allGitBranch = yield call(getGitBranch, payload);
       if (!allGitBranch) return;
       yield put({ type: 'save', payload: { addAllGitBranch: allGitBranch } });
+    },
+    *findCodeRepository({ payload }, { select, call, put }) {
+      let repositoryQueryParam = yield select(state => state.ImageConfigModel.repositoryQueryParam);
+      repositoryQueryParam = { ...repositoryQueryParam, ...payload };
+      // 清空数据
+      yield put({ type: 'save', payload: { repositoryData: [], selectRepository: undefined } });
+      // 请求数据
+      const response = yield call(findCodeRepository, repositoryQueryParam);
+      if (!response) return;
+      const { list } = response;
+      // 保存数据
+      yield put({ type: 'save', payload: { repositoryData: list, repositoryQueryParam } });
     },
   },
 
