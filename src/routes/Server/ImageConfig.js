@@ -280,6 +280,8 @@ export default class ImageConfig extends PureComponent {
             </Popconfirm>
             <Divider type="vertical" />
             <Link to={`/server/config/detail/${record.serverUrl}`}>详情</Link>
+            <Divider type="vertical" />
+            <Link target="_blank" to={`/server/config/build/${record.serverUrl}`}>构建</Link>
           </div>
         ),
       },

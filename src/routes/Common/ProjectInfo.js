@@ -103,7 +103,11 @@ export default class ProjectInfo extends PureComponent {
             </tr>
             <tr>
               <td className={styles.tableLabel}>构建状态</td>
-              <td className={styles.tableValue}><span style={{ color: buildState.color }}>{buildState.label}</span></td>
+              <td className={styles.tableValue}>
+                <span style={{ color: buildState.color }}>{buildState.label}</span>
+                <span className={styles.spanWidth15} />
+                <Link target="_blank" to={`/server/config/build/${imageConfig.serverUrl}`}>立即构建</Link>
+              </td>
             </tr>
             <tr>
               <td className={styles.tableLabel}>Docker镜像ID</td>

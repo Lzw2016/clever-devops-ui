@@ -41,6 +41,7 @@ export default class ImageBuildLog extends PureComponent {
     return (
       <PageHeaderLayout>
         <Card bordered={false}>
+          <div>{this.props.match.params.serverUrl}</div>
           <div className={xtermStyles.terminal} id={showBuildLogTerminalId} style={{ height: 600 }} />
         </Card>
       </PageHeaderLayout>
