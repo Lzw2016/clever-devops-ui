@@ -244,7 +244,7 @@ export default class ImageConfig extends PureComponent {
       },
       { title: '服务域名', dataIndex: 'serverUrl', render: val => <a target='_blank' href={`http://${val}`}>{val}</a> },
       { title: '服务端口', dataIndex: 'serverPorts' },
-      { title: '默认运行数', dataIndex: 'serverCount' },
+      { title: '默认服务数', dataIndex: 'serverCount' },
       {
         title: '项目语言', dataIndex: 'language', render: val => {
           let language = LanguageMapper[`${val}`];
