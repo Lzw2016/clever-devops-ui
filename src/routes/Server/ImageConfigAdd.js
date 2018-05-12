@@ -19,21 +19,24 @@ export default class ImageConfigAdd extends PureComponent {
     dispatch({ type: 'ImageConfigModel/findCodeRepository', payload: { projectName: value } });
   };
 
-  // 选择项目
+  // 选择项目变化
   onChangeProjectName = (value, option) => {
     const { dispatch, form: { setFields } } = this.props;
+    setFields({ branch: { value: undefined } });
+    if(!option) return;
     const { data } = option.props;
     // 保存选择项目
     dispatch({ type: 'ImageConfigModel/save', payload: { selectRepository: data } });
     // 获取项目版本分支
-    setFields({ branch: { value: undefined } });
     dispatch({ type: 'ImageConfigModel/getAddAllGitBranch', payload: { ...data } });
   }
 
-  // 焦点离开
+  // 焦点离开 - 清除 projectName branch
   onBlurProjectName = () => {
     const { dispatch, form: { setFields, getFieldValue }, ImageConfigModel: { selectRepository } } = this.props;
-    if (selectRepository && selectRepository.id && selectRepository.projectName && selectRepository.projectName === getFieldValue('projectName')) return;
+    const projectName = getFieldValue('projectName');
+    if (!projectName) return;
+    if (selectRepository && selectRepository.id && selectRepository.projectName && selectRepository.projectName === projectName) return;
     setFields({ projectName: { value: undefined } });
     dispatch({ type: 'ImageConfigModel/findCodeRepository', payload: { projectName: '' } });
     setFields({ branch: { value: undefined } });
@@ -91,7 +94,7 @@ export default class ImageConfigAdd extends PureComponent {
                 initialValue: ImageConfigData ? ImageConfigData.branch : undefined,
                 rules: [{ required: true, message: '版本分支必填' }],
               })(
-                <Select placeholder="请选择" allowClear={true} showSearch={false} notFoundContent={getAllGitBranchLoading ? <Spin size="small" /> : null}>
+                <Select placeholder="请选择" allowClear={true} showSearch={false} notFoundContent={getAllGitBranchLoading ? <Spin size="small" /> : '搜索不到版本分支'}>
                   <Select.OptGroup label="Branch">
                     {addAllGitBranch
                       .filter(item => item.branch.indexOf('refs/heads/') !== -1)
@@ -162,7 +165,7 @@ export default class ImageConfigAdd extends PureComponent {
             <Form.Item label="项目描述">
               {getFieldDecorator('description', {
                 initialValue: ImageConfigData ? ImageConfigData.description : undefined,
-                rules: [{ whitespace: true, max: 200, message: '不能超过200个字符' }],
+                rules: [{ whitespace: false, max: 200, message: '不能超过200个字符' }],
               })(
                 <Input.TextArea autosize={{ minRows: 1, maxRows: 3 }} placeholder="请输入" />
               )}

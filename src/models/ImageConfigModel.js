@@ -66,14 +66,15 @@ export default {
       }
     },
     *addImageConfig({ payload }, { select, call, put }) {
-      let addCodeRepositoryData = yield select(state => state.ImageConfigModel.addCodeRepositoryData);
-      addCodeRepositoryData = { ...addCodeRepositoryData, ...payload };
-      yield put({ type: 'save', payload: { addCodeRepositoryData } });
+      let addImageConfigData = yield select(state => state.ImageConfigModel.addImageConfigData);
+      const selectRepository = yield select(state => state.ImageConfigModel.selectRepository);
+      addImageConfigData = { ...addImageConfigData, ...payload, repositoryId: selectRepository.id };
+      yield put({ type: 'save', payload: { addImageConfigData } });
       // 请求数据
-      const response = yield call(addImageConfig, addCodeRepositoryData);
+      const response = yield call(addImageConfig, addImageConfigData);
       if (response) {
-        yield put({ type: 'save', payload: { addCodeRepositoryData: null, addCodeRepositoryShow: false } });
-        message.success(`新增成功 -> [${addCodeRepositoryData.projectName}]`)
+        yield put({ type: 'save', payload: { addImageConfigData: {}, addImageConfigShow: false } });
+        message.success(`新增成功 -> [${addImageConfigData.serverUrl}]`);
         // 重新加载数据
         yield put({ type: 'findImageConfig' });
       }
@@ -85,7 +86,7 @@ export default {
       const response = yield call(updateImageConfig, editImageConfigData.id, editImageConfigData);
       if (response) {
         yield put({ type: 'save', payload: { editImageConfigData: null, editImageConfigShow: false } });
-        message.success(`更新成功 -> [${editImageConfigData.serverUrl}]`)
+        message.success(`更新成功 -> [${editImageConfigData.serverUrl}]`);
         // 重新加载数据
         yield put({ type: 'findImageConfig' });
       }
