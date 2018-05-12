@@ -1,41 +1,19 @@
 import React, { PureComponent, Fragment } from 'react';
 // import { Modal } from 'antd';
 import moment from 'moment';
-import { Terminal } from 'xterm';
-import * as fit from 'xterm/lib/addons/fit/fit';
 import { AuthorizationTypeMapper, LanguageMapper, RepositoryTypeMapper, BuildStateMapper } from '../../utils/enum';
-import { TerminalInit } from '../../utils/constant';
-import TerminalComponent from './TerminalComponent';
+// import TerminalComponent from './TerminalComponent';
 // import classNames from 'classnames';
 import styles from './ProjectInfo.less'
 
 export default class ProjectInfo extends PureComponent {
 
-  state = {
-    xterm: undefined,
-  };
-
   // 数据初始化
   componentDidMount() {
   }
 
-  setLogText = () => {
-    let { xterm } = this.state;
-    if (!xterm) {
-      Terminal.applyAddon(fit);
-      xterm = new Terminal({ ...TerminalInit });
-      xterm.open(document.getElementById('terminal'));
-      this.setState({ xterm });
-    }
-    xterm.clear();
-    const { imageConfig } = this.props;
-    if (!imageConfig) return;
-    xterm.write(imageConfig.buildLogs);
-    xterm.fit();
-  }
-
   render() {
-    const { codeRepository, imageConfig } = this.props;
+    const { codeRepository, imageConfig, showBuildLogs } = this.props;
     if (!codeRepository || !imageConfig) return '加载中...';
     let authorizationType = AuthorizationTypeMapper[codeRepository.authorizationType];
     if (!authorizationType) authorizationType = AuthorizationTypeMapper.error;
@@ -45,6 +23,15 @@ export default class ProjectInfo extends PureComponent {
     if (!repositoryType) repositoryType = RepositoryTypeMapper.error;
     let buildState = BuildStateMapper[imageConfig.buildState];
     if (!buildState) buildState = BuildStateMapper.error;
+    const buildLogs = {
+      projectName: codeRepository.projectName,
+      repositoryUrl: codeRepository.repositoryUrl,
+      branch: imageConfig.branch,
+      commitId: imageConfig.commitId,
+      buildStartTime: imageConfig.buildStartTime,
+      buildEndTime: imageConfig.buildEndTime,
+      buildLogs: imageConfig.buildLogs,
+    };
     return (
       <Fragment>
         <div className={styles.title}>服务代码仓库信息</div>
@@ -139,7 +126,7 @@ export default class ProjectInfo extends PureComponent {
             <tr>
               <td className={styles.tableLabel}>编译日志</td>
               <td className={styles.tableValue}>
-                {imageConfig.buildLogs ? <a onClick={() => { this.setLogText(); }}>查看</a> : ''}
+                {imageConfig.buildLogs ? <a onClick={() => { if (showBuildLogs instanceof Function) showBuildLogs(buildLogs) }}>查看</a> : ''}
               </td>
             </tr>
             <tr>
@@ -160,9 +147,6 @@ export default class ProjectInfo extends PureComponent {
             </tr>
           </tbody>
         </table >
-        <div style={{ height: 18 }} />
-        <TerminalComponent />
-        {/* <div className={styles.terminal} id="terminal" style={{ height: 600 }} /> */}
       </Fragment>
     );
   }

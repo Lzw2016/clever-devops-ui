@@ -49,6 +49,7 @@
     "react/jsx-boolean-value": [0],
     "no-underscore-dangle": [0],
     "no-plusplus": [0],
+    "react/sort-comp": [0],
     "comma-dangle": [
       "error",
       {
