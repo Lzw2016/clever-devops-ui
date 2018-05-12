@@ -44,9 +44,20 @@ const ModelInitState = {
   },
 }
 
+const TerminalInit = {
+  cursorBlink: true,
+  cursorStyle: 'block', // block underline bar
+  enableBold: false,
+  bellStyle: 'sound',
+  fontFamily: '"DejaVu Sans Mono", "Everson Mono", FreeMono, Menlo, Terminal, monospace, Consolas',
+  scrollback: 10000,
+  tabStopWidth: 4,
+}
+
 export {
   SystemInfo,
   CodeMessage,
   ApiPathConfig,
   ModelInitState,
+  TerminalInit,
 };

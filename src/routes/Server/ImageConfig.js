@@ -279,7 +279,7 @@ export default class ImageConfig extends PureComponent {
               <a>删除</a>
             </Popconfirm>
             <Divider type="vertical" />
-            <Link to={`/server/config/detail/${record.id}`}>详情</Link>
+            <Link to={`/server/config/detail/${record.serverUrl}`}>详情</Link>
           </div>
         ),
       },

@@ -54,13 +54,13 @@ const BuildStateArray = [
   { value: 'F', label: '构建失败' },
 ];
 const BuildStateMapper = {
-  '0': { label: '未构建', badgeStatus: 'default' },
-  '1': { label: '正在下载代码', badgeStatus: 'processing' },
-  '2': { label: '正在编译代码', badgeStatus: 'processing' },
-  '3': { label: '正在构建镜像', badgeStatus: 'processing' },
-  'S': { label: '构建成功', badgeStatus: 'success' },
-  'F': { label: '构建失败', badgeStatus: 'warning' },
-  error: { label: '未知', badgeStatus: 'error' },
+  '0': { label: '未构建', badgeStatus: 'default', color: 'rgba(0,0,0,.85)' },
+  '1': { label: '正在下载代码', badgeStatus: 'processing', color: '#1890ff' },
+  '2': { label: '正在编译代码', badgeStatus: 'processing', color: '#1890ff' },
+  '3': { label: '正在构建镜像', badgeStatus: 'processing', color: '#1890ff' },
+  'S': { label: '构建成功', badgeStatus: 'success', color: '#52c41a' },
+  'F': { label: '构建失败', badgeStatus: 'warning', color: '#faad14' },
+  error: { label: '未知', badgeStatus: 'error', color: '#f5222d' },
 };
 
 export {

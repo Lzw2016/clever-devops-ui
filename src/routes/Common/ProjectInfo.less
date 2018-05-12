@@ -1,0 +1,52 @@
+.title {
+  width: 100%;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 3px 0 5px 16px;
+  margin-bottom: 10px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  color: rgba(0, 0, 0, 0.85);
+  display: inline-block;
+  flex: 1;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.infoTable {
+  border-collapse: collapse;
+  border-spacing: 0;
+  empty-cells: show;
+  border: 1px solid #e8e8e8;
+  width: 100%;
+
+  tbody{
+    display: table-row-group;
+    vertical-align: middle;
+    border-color: inherit;
+  }
+
+  td, th {
+    border-bottom: 1px solid #e8e8e8;
+    padding: 8px 16px;
+    text-align: left;
+  }
+
+  .tableLabel {
+    padding-left: 0;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.55);
+    width: 120px;
+    text-align: center;
+    background-color: #ebf7ff;
+  }
+
+  .tableValue {
+    // font-size: 12px;
+  }
+}
+
+.spanWidth15 {
+  display: inline-block;
+  width: 15px;
+}
