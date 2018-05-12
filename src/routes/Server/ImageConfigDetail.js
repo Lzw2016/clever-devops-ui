@@ -16,6 +16,14 @@ export default class ImageConfigDetail extends PureComponent {
 
   state = {
     tabActiveKey: 'Info',
+    tabList: [
+      { key: 'Info', tab: '项目信息' },
+      { key: 'ImageList', tab: '镜像列表' },
+      { key: 'ContainerList', tab: '容器列表' },
+      { key: 'BuildImage', tab: '构建镜像' },
+      { key: 'BuildImageHistory', tab: '构建历史' },
+      { key: 'BuildImageLog', tab: '构建日志' },
+    ],
   };
 
   // 数据初始化
@@ -84,26 +92,16 @@ export default class ImageConfigDetail extends PureComponent {
     return <Button type="primary" icon="reload" loading={getPageDataLoading} onClick={() => dispatch({ type: 'ImageConfigDetailModel/getPageData' })}>刷新</Button>;
   }
 
-  // Tab叶签
-  tabList = () => {
-    return [
-      { key: 'Info', tab: '项目信息' },
-      { key: 'ImageList', tab: '镜像列表' },
-      { key: 'ContainerList', tab: '容器列表' },
-      { key: 'BuildImage', tab: '构建镜像' },
-    ];
-  }
-
   render() {
     const { ImageConfigDetailModel, getPageDataLoading } = this.props; // dispatch,
-    const { tabActiveKey } = this.state;
+    const { tabActiveKey, tabList } = this.state;
     return (
       <PageHeaderLayout
         title={this.title()}
         content={this.baseDetail()}
         action={this.action()}
         extraContent={this.buildStateExtra()}
-        tabList={this.tabList()}
+        tabList={tabList}
         tabActiveKey={tabActiveKey}
         onTabChange={(key) => this.setState({ tabActiveKey: key })}
       >
