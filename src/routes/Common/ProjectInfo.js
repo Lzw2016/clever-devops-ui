@@ -1,5 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
 // import { Modal } from 'antd';
+import { Link } from 'dva/router';
 import moment from 'moment';
 import { AuthorizationTypeMapper, LanguageMapper, RepositoryTypeMapper, BuildStateMapper } from '../../utils/enum';
 // import TerminalComponent from './TerminalComponent';
@@ -13,7 +14,7 @@ export default class ProjectInfo extends PureComponent {
   }
 
   render() {
-    const { codeRepository, imageConfig, showBuildLogs } = this.props;
+    const { codeRepository, imageConfig } = this.props;
     if (!codeRepository || !imageConfig) return '加载中...';
     let authorizationType = AuthorizationTypeMapper[codeRepository.authorizationType];
     if (!authorizationType) authorizationType = AuthorizationTypeMapper.error;
@@ -23,15 +24,6 @@ export default class ProjectInfo extends PureComponent {
     if (!repositoryType) repositoryType = RepositoryTypeMapper.error;
     let buildState = BuildStateMapper[imageConfig.buildState];
     if (!buildState) buildState = BuildStateMapper.error;
-    const buildLogs = {
-      projectName: codeRepository.projectName,
-      repositoryUrl: codeRepository.repositoryUrl,
-      branch: imageConfig.branch,
-      commitId: imageConfig.commitId,
-      buildStartTime: imageConfig.buildStartTime,
-      buildEndTime: imageConfig.buildEndTime,
-      buildLogs: imageConfig.buildLogs,
-    };
     return (
       <Fragment>
         <div className={styles.title}>服务代码仓库信息</div>
@@ -39,7 +31,9 @@ export default class ProjectInfo extends PureComponent {
           <tbody>
             <tr>
               <td className={styles.tableLabel}>项目名称</td>
-              <td className={styles.tableValue}>{codeRepository.projectName}</td>
+              <td className={styles.tableValue}>
+                <Link to={`/server/repository/detail/${codeRepository.id}`}>{codeRepository.projectName}</Link>
+              </td>
             </tr>
             <tr>
               <td className={styles.tableLabel}>项目语言</td>
@@ -96,7 +90,7 @@ export default class ProjectInfo extends PureComponent {
             <tr>
               <td className={styles.tableLabel}>服务域名</td>
               <td className={styles.tableValue}>
-                <a target="_blank" href="">{imageConfig.serverUrl}</a>
+                <a target="_blank" href={`http://${imageConfig.serverUrl}`}>{imageConfig.serverUrl}</a>
               </td>
             </tr>
             <tr>
@@ -126,7 +120,7 @@ export default class ProjectInfo extends PureComponent {
             <tr>
               <td className={styles.tableLabel}>编译日志</td>
               <td className={styles.tableValue}>
-                {imageConfig.buildLogs ? <a onClick={() => { if (showBuildLogs instanceof Function) showBuildLogs(buildLogs) }}>查看</a> : ''}
+                <Link target="_blank" to={`/server/config/build-log/${imageConfig.serverUrl}`}>查看构建日志</Link>
               </td>
             </tr>
             <tr>
