@@ -107,6 +107,10 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, [], () => import('../routes/Server/ServerListDetail')),
       name: '详情',
     },
+    '/server/list/log/:id': {
+      component: dynamicWrapper(app, [], () => import('../routes/Server/ServerLog')),
+      name: '服务日志',
+    },
     // 异常页面
     '/exception/403': {
       component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
