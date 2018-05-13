@@ -5,6 +5,7 @@ import { Card, Button } from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import ProjectInfo from '../Common/ProjectInfo'
+import ImageBuildLogList from '../Common/ImageBuildLogList'
 import { AuthorizationTypeMapper, BuildStateMapper } from '../../utils/enum';
 // import classNames from 'classnames';
 import styles from './ImageConfigDetail.less'
@@ -12,6 +13,7 @@ import styles from './ImageConfigDetail.less'
 @connect(({ ImageConfigDetailModel, loading }) => ({
   ImageConfigDetailModel,
   getPageDataLoading: loading.effects['ImageConfigDetailModel/getPageData'],
+  findImageBuildLogLoading: loading.effects['ImageConfigDetailModel/findImageBuildLog'],
 }))
 export default class ImageConfigDetail extends PureComponent {
 
@@ -92,7 +94,7 @@ export default class ImageConfigDetail extends PureComponent {
   }
 
   render() {
-    const { ImageConfigDetailModel, getPageDataLoading } = this.props; // dispatch,
+    const { dispatch, ImageConfigDetailModel, getPageDataLoading, findImageBuildLogLoading } = this.props;
     const { tabActiveKey, tabList } = this.state;
     return (
       <PageHeaderLayout
@@ -123,7 +125,13 @@ export default class ImageConfigDetail extends PureComponent {
             ContainerList
           </div>
           <div style={{ display: tabActiveKey === 'BuildImageHistory' ? 'block' : 'none' }}>
-            BuildImageHistory
+            <ImageBuildLogList
+              dispatch={dispatch}
+              quetyLoading={findImageBuildLogLoading === undefined ? false : findImageBuildLogLoading}
+              queryParam={ImageConfigDetailModel.queryBuildLogParam}
+              data={ImageConfigDetailModel.buildLogData}
+              pagination={ImageConfigDetailModel.buildLogPagination}
+            />
           </div>
         </Card>
       </PageHeaderLayout>

@@ -1,6 +1,7 @@
 // import { message } from 'antd';
 import { getCodeRepositoryById } from '../services/CodeRepositoryApi';
 import { getImageConfig } from '../services/ImageConfigApi';
+import { getImageBuildLog } from '../services/ImageBuildLogApi';
 
 export default {
   namespace: 'ImageBuildLogModel',
@@ -37,6 +38,12 @@ export default {
         const codeRepository = yield call(getCodeRepositoryById, imageConfig.repositoryId);
         if (!codeRepository) return;
         buildLog = { ...imageConfig, ...codeRepository, repositoryId: codeRepository.id };
+      } else if (logId) {
+        const imageBuildLog = yield call(getImageBuildLog, logId);
+        if (!imageBuildLog) return;
+        const codeRepository = yield call(getCodeRepositoryById, imageBuildLog.repositoryId);
+        if (!codeRepository) return;
+        buildLog = { ...codeRepository, ...imageBuildLog };
       }
       // 保存数据
       yield put({ type: 'save', payload: { buildLog } });

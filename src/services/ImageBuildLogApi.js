@@ -6,7 +6,7 @@ const { prefix, suffix } = ApiPathConfig;
 // ================================================================================================= Docker镜像构建日志 API
 
 // 查询Docker镜像构建日志
-export async function findByPage(params) {
+export async function findImageBuildLog(params) {
   return request(`${prefix}/image_build_log${suffix}?${stringify(params)}`);
 }
 
