@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 // import { parse } from 'qs';
 import lodash from 'lodash';
 import moment from 'moment';
@@ -22,6 +22,7 @@ export default class ImageBuild extends PureComponent {
 
   state = {
     showBuildTerminalId: 'showBuildTerminalId',
+    isBuilding: false,
     buildState: undefined,
     buildStartTime: undefined,
     buildTime: undefined,
@@ -67,16 +68,15 @@ export default class ImageBuild extends PureComponent {
   }
 
   buildImage = () => {
-    const { buildTerminal, isBuilding } = this;
+    const { buildTerminal } = this;
     const { ImageBuildModel: { imageConfig } } = this.props;
-    // const { } = this.state;
+    const { isBuilding } = this.state;
     if (isBuilding) {
       return;
     }
-    this.isBuilding = true;
     // 开始计时
     const stopTimer = setInterval(this.setBuildTime, 1000);
-    this.setState({ stopTimer });
+    this.setState({ stopTimer, isBuilding: true });
     const webSocket = new WebSocket('ws://127.0.0.1:28080/build_image');
     // 连接服务器
     webSocket.onopen = () => {
@@ -95,32 +95,39 @@ export default class ImageBuild extends PureComponent {
     // 连接关闭
     webSocket.onclose = (evt) => {
       buildTerminal.writeln(`\r\n---> 断开连接 [${JSON.stringify(evt)}]\r\n`);
-      this.isBuilding = false;
+      this.setState({ isBuilding: false });
     };
     // 连接错误
     webSocket.onerror = (evt) => {
       buildTerminal.writeln(`\r\n---> 连接错误 [${JSON.stringify(evt)}]\r\n`);
-      this.isBuilding = false;
+      this.setState({ isBuilding: false });
     };
   }
 
   buildAction = (buildState) => {
-    const { isBuilding } = this;
-    const { buildTime } = this.state;
+    const { isBuilding, buildTime } = this.state;
     if (isBuilding) return buildTime ? <span>{buildTime} 秒</span> : '';
     // 当前镜像构建状态(0：未构建, 1：正在下载代码, 2：正在编译代码, 3：正在构建镜像, S：构建成功, F：构建失败)
+    let actionText;
     if (buildState === '1' || buildState === '2' || buildState === '3') {
-      return (<a onClick={() => this.buildImage()}>连接构建控制台</a>);
+      actionText = '连接构建控制台';
     }
     if (buildState === '0' || buildState === 'S' || buildState === 'F') {
-      return (<a onClick={() => this.buildImage()}>开始构建</a>);
+      actionText = '开始构建';
     }
+    return (
+      <Fragment>
+        {buildTime ? <span>{buildTime} 秒</span> : ''}
+        {actionText ? <span className={styles.spanWidth16} /> : ''}
+        {actionText ? <a onClick={() => this.buildImage()}>{actionText}</a> : ''}
+      </Fragment>
+    );
   }
 
   // 计算构建耗时
   setBuildTime = () => {
-    if (!this.isBuilding) return;
-    const { buildStartTime } = this.state;
+    const { isBuilding, buildStartTime } = this.state;
+    if (!isBuilding) return;
     if (!(buildStartTime instanceof Date)) return;
     const buildTime = moment(new Date()).diff(moment(buildStartTime))
     this.setState({ buildTime: Math.round(buildTime / 1000) });
