@@ -67,6 +67,7 @@ export default class ServerLog extends PureComponent {
     if (isConnect) {
       return;
     }
+    logTerminal.clear();
     // 开始计时
     const stopTimer = setInterval(this.setBuildTime, 1000);
     const webSocket = new WebSocket(WebSocketUrls.serverLog);
