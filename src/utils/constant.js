@@ -54,10 +54,16 @@ const TerminalInit = {
   tabStopWidth: 4,
 }
 
+const WebSocketUrls = {
+  buildImage: 'ws://127.0.0.1:28080/build_image',
+  serverLog: 'ws://127.0.0.1:28080/server_log',
+};
+
 export {
   SystemInfo,
   CodeMessage,
   ApiPathConfig,
   ModelInitState,
   TerminalInit,
+  WebSocketUrls,
 };

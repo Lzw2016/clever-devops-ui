@@ -8,7 +8,7 @@ import { Link } from 'dva/router';
 import { Terminal } from 'xterm';
 import * as fit from 'xterm/lib/addons/fit/fit';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import { TerminalInit } from '../../utils/constant';
+import { TerminalInit, WebSocketUrls } from '../../utils/constant';
 import { LanguageMapper, RepositoryTypeMapper, BuildStateMapper } from '../../utils/enum';
 // import classNames from 'classnames';
 import styles from './ImageBuild.less'
@@ -43,8 +43,8 @@ export default class ImageBuild extends PureComponent {
   }
 
   componentWillUnmount() {
-    if (this.showBuildLogTerminal) {
-      this.showBuildLogTerminal.destroy();
+    if (this.buildTerminal) {
+      this.buildTerminal.destroy();
     }
     const { stopTimer } = this.state;
     if (stopTimer) clearInterval(stopTimer);
@@ -77,7 +77,7 @@ export default class ImageBuild extends PureComponent {
     // 开始计时
     const stopTimer = setInterval(this.setBuildTime, 1000);
     this.setState({ stopTimer, isBuilding: true });
-    const webSocket = new WebSocket('ws://127.0.0.1:28080/build_image');
+    const webSocket = new WebSocket(WebSocketUrls.buildImage);
     // 连接服务器
     webSocket.onopen = () => {
       buildTerminal.writeln('\r\n---> 连接服务器成功\r\n');
