@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 // import { parse } from 'qs';
 import lodash from 'lodash';
-// import moment from 'moment';
+import moment from 'moment';
 import { connect } from 'dva';
 import { Card } from 'antd';
 import { Link } from 'dva/router';
@@ -23,6 +23,9 @@ export default class ImageBuild extends PureComponent {
   state = {
     showBuildTerminalId: 'showBuildTerminalId',
     buildState: undefined,
+    buildStartTime: undefined,
+    buildTime: undefined,
+    stopTimer: undefined,
   };
 
   // 数据初始化
@@ -42,6 +45,8 @@ export default class ImageBuild extends PureComponent {
     if (this.showBuildLogTerminal) {
       this.showBuildLogTerminal.destroy();
     }
+    const { stopTimer } = this.state;
+    if (stopTimer) clearInterval(stopTimer);
   }
 
   // 初始化控制台 xterm
@@ -69,6 +74,9 @@ export default class ImageBuild extends PureComponent {
       return;
     }
     this.isBuilding = true;
+    // 开始计时
+    const stopTimer = setInterval(this.setBuildTime, 1000);
+    this.setState({ stopTimer });
     const webSocket = new WebSocket('ws://127.0.0.1:28080/build_image');
     // 连接服务器
     webSocket.onopen = () => {
@@ -77,13 +85,12 @@ export default class ImageBuild extends PureComponent {
     };
     // 消息处理
     webSocket.onmessage = (evt) => {
-      const { buildState, complete, logText } = JSON.parse(evt.data);
+      const { buildState, complete, logText, startTime } = JSON.parse(evt.data);
       buildTerminal.write(logText);
       if (complete) {
         webSocket.close();
-        this.isBuilding = false;
       }
-      this.setState({ buildState });
+      this.setState({ buildState, buildStartTime: new Date(startTime) });
     };
     // 连接关闭
     webSocket.onclose = (evt) => {
@@ -99,7 +106,8 @@ export default class ImageBuild extends PureComponent {
 
   buildAction = (buildState) => {
     const { isBuilding } = this;
-    if (isBuilding) return '';
+    const { buildTime } = this.state;
+    if (isBuilding) return buildTime ? <span>{buildTime} 秒</span> : '';
     // 当前镜像构建状态(0：未构建, 1：正在下载代码, 2：正在编译代码, 3：正在构建镜像, S：构建成功, F：构建失败)
     if (buildState === '1' || buildState === '2' || buildState === '3') {
       return (<a onClick={() => this.buildImage()}>连接构建控制台</a>);
@@ -107,6 +115,15 @@ export default class ImageBuild extends PureComponent {
     if (buildState === '0' || buildState === 'S' || buildState === 'F') {
       return (<a onClick={() => this.buildImage()}>开始构建</a>);
     }
+  }
+
+  // 计算构建耗时
+  setBuildTime = () => {
+    if (!this.isBuilding) return;
+    const { buildStartTime } = this.state;
+    if (!(buildStartTime instanceof Date)) return;
+    const buildTime = moment(new Date()).diff(moment(buildStartTime))
+    this.setState({ buildTime: Math.round(buildTime / 1000) });
   }
 
   render() {
