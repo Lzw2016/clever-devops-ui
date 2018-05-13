@@ -93,7 +93,7 @@ export const getRouterData = app => {
       name: '详情',
     },
     '/server/config/build/:serverUrl': {
-      component: dynamicWrapper(app, [], () => import('../routes/Server/ImageBuild')),
+      component: dynamicWrapper(app, ['ImageBuildModel'], () => import('../routes/Server/ImageBuild')),
       name: '构建镜像',
     },
     '/server/config/build-log/:serverUrl': {

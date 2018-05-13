@@ -123,7 +123,6 @@ export default class ImageBuildLog extends PureComponent {
               </tr>
             </tbody>
           </table>
-          {/* <div>{this.props.match.params.serverUrl}</div> */}
           <div style={{ height: 20 }} />
           <div className={xtermStyles.terminal} id={showBuildLogTerminalId} style={{ height: 1000 }} />
         </Card>
