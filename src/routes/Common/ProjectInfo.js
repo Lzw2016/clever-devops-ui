@@ -1,5 +1,6 @@
 import React, { PureComponent, Fragment } from 'react';
-// import { Modal } from 'antd';
+import { stringify } from 'qs';
+import { Icon } from 'antd';
 import { Link } from 'dva/router';
 import moment from 'moment';
 import { AuthorizationTypeMapper, LanguageMapper, RepositoryTypeMapper, BuildStateMapper } from '../../utils/enum';
@@ -106,7 +107,9 @@ export default class ProjectInfo extends PureComponent {
               <td className={styles.tableValue}>
                 <span style={{ color: buildState.color }}>{buildState.label}</span>
                 <span className={styles.spanWidth15} />
-                <Link target="_blank" to={`/server/config/build/${imageConfig.serverUrl}`}>立即构建</Link>
+                <Link target="_blank" to={`/server/config/build/${imageConfig.serverUrl}`}>
+                  立即构建 <Icon type="rocket" />
+                </Link>
               </td>
             </tr>
             <tr>
@@ -124,7 +127,7 @@ export default class ProjectInfo extends PureComponent {
             <tr>
               <td className={styles.tableLabel}>编译日志</td>
               <td className={styles.tableValue}>
-                <Link target="_blank" to={`/server/config/build-log/${imageConfig.serverUrl}`}>查看构建日志</Link>
+                <Link target="_blank" to={{ pathname: `/server/config/build-log/${imageConfig.serverUrl}`, search: stringify({ logId: 'imageConfig' }) }}>查看构建日志</Link>
               </td>
             </tr>
             <tr>

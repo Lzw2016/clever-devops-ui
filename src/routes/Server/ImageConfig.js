@@ -1,7 +1,7 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Spin, Card, Form, Table, Divider, Popconfirm, Row, Input, Select, Button, Badge, Popover } from 'antd';
+import { Spin, Card, Form, Table, Divider, Popconfirm, Row, Input, Select, Button, Badge, Popover, Icon } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import ImageConfigAdd from './ImageConfigAdd';
 import ImageConfigUpdate from './ImageConfigUpdate';
@@ -258,12 +258,20 @@ export default class ImageConfig extends PureComponent {
       { title: '编译方式', dataIndex: 'buildType' },
       { title: 'Dockerfile', dataIndex: 'dockerFilePath' },
       {
-        title: '构建状态', dataIndex: 'buildState', render: val => {
+        title: '构建状态', dataIndex: 'buildState', render: (val, record) => {
           let buildState = BuildStateMapper[`${val}`];
           if (!buildState) {
             buildState = BuildStateMapper.error;
           }
-          return <Badge status={buildState.badgeStatus} text={buildState.label} />;
+          return (
+            <Fragment>
+              <Badge status={buildState.badgeStatus} text={buildState.label} />
+              <span className={styles.spanWidth5} />
+              <Link target="_blank" to={`/server/config/build/${record.serverUrl}`}>
+                <Icon type="rocket" />
+              </Link>
+            </Fragment>
+          );
         },
       },
       { title: '上次构建时间', dataIndex: 'buildEndTime' },
@@ -280,8 +288,6 @@ export default class ImageConfig extends PureComponent {
             </Popconfirm>
             <Divider type="vertical" />
             <Link to={`/server/config/detail/${record.serverUrl}`}>详情</Link>
-            <Divider type="vertical" />
-            <Link target="_blank" to={`/server/config/build/${record.serverUrl}`}>构建</Link>
           </div>
         ),
       },
