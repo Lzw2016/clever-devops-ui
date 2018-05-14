@@ -54,9 +54,17 @@ const TerminalInit = {
   tabStopWidth: 4,
 }
 
+const LocationParam = {
+  host: window.location.host,         // localhost:8000
+  hostname: window.location.hostname, // localhost
+  origin: window.location.origin,     // http://localhost:8000
+  port: window.location.port,         // 8000
+  protocol: window.location.protocol, // http:
+}
+
 const WebSocketUrls = {
-  buildImage: 'ws://127.0.0.1:28080/build_image',
-  serverLog: 'ws://127.0.0.1:28080/server_log',
+  buildImage: `ws://${LocationParam.host}/build_image`,
+  serverLog: `ws://${LocationParam.host}/server_log`,
 };
 
 export {
@@ -66,4 +74,5 @@ export {
   ModelInitState,
   TerminalInit,
   WebSocketUrls,
+  LocationParam,
 };
