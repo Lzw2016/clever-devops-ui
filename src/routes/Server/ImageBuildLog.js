@@ -112,7 +112,7 @@ export default class ImageBuildLog extends PureComponent {
                 <td className={styles.tableValue}><span style={{ color: buildState.color }}>{buildState.label}</span></td>
               </tr>
               <tr>
-                <td className={styles.tableLabel}>编译时间</td>
+                <td className={styles.tableLabel}>构建时间</td>
                 <td className={styles.tableValue}>
                   {`${buildLog.buildStartTime} -- ${buildLog.buildEndTime}`}
                   <span className={styles.spanWidth15} />

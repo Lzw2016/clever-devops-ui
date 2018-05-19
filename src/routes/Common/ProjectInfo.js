@@ -117,7 +117,7 @@ export default class ProjectInfo extends PureComponent {
               <td className={styles.tableValue}>{imageConfig.imageId}</td>
             </tr>
             <tr>
-              <td className={styles.tableLabel}>编译时间</td>
+              <td className={styles.tableLabel}>构建时间</td>
               <td className={styles.tableValue}>
                 {`${imageConfig.buildStartTime} -- ${imageConfig.buildEndTime}`}
                 <span className={styles.spanWidth15} />
