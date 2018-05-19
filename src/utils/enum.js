@@ -74,7 +74,7 @@ const ContainerStateMapper = {
   'created': { label: '已创建', badgeStatus: 'default', color: undefined },
   'running': { label: '运行中', badgeStatus: 'processing', color: '#1890ff' },
   'exited': { label: '已停止', badgeStatus: 'error', color: '#f5222d' },
-  'warning': { label: '已暂停', badgeStatus: 'warning', color: '#faad14' },
+  'paused': { label: '已暂停', badgeStatus: 'warning', color: '#faad14' },
   error: { label: '未知', badgeStatus: 'error', color: '#f5222d' },
 };
 
