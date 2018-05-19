@@ -48,7 +48,8 @@
     "rollbar": "^2.3.4",
     "url-polyfill": "^1.0.10",
     "axios": "^0.18.0",
-    "xterm": "^3.3.0"
+    "xterm": "^3.3.0",
+    "react-json-tree": "^0.11.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.1.2",

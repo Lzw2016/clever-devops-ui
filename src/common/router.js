@@ -111,6 +111,38 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, [], () => import('../routes/Server/ServerLog')),
       name: '服务日志',
     },
+    '/docker/container/:list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Docker/ContainerList')),
+      name: '容器列表',
+    },
+    '/docker/image/:list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Docker/ImageList')),
+      name: '镜像列表',
+    },
+    '/docker/network/:list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Docker/NetworkList')),
+      name: '网络管理',
+    },
+    '/docker/volume/:list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Docker/VolumeList')),
+      name: '卷管理',
+    },
+    '/docker/config/:list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Docker/ConfigList')),
+      name: '配置管理',
+    },
+    '/docker/secret-key/:list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Docker/SecretKeyList')),
+      name: '密钥管理',
+    },
+    '/docker/docker-event/:list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Docker/DockerEventList')),
+      name: 'Docker事件',
+    },
+    '/docker/swarm-info/:list': {
+      component: dynamicWrapper(app, [], () => import('../routes/Docker/SwarmInfo')),
+      name: 'Docker事件',
+    },
     // 异常页面
     '/exception/403': {
       component: dynamicWrapper(app, [], () => import('../routes/Exception/403')),
