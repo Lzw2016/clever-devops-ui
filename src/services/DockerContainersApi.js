@@ -7,7 +7,7 @@ const { prefix, suffix } = ApiPathConfig;
 
 // 查询Docker Containers
 export async function listContainers(params) {
-  return request(`${prefix}/docker/container${suffix}?${stringify(params)}`);
+  return request(`${prefix}/docker/container${suffix}?${stringify(params, { indices: false })}`);
 }
 
 // 检查Docker Containers

@@ -68,6 +68,7 @@ const ContainerStateArray = [
   { value: 'running', label: '运行中' },
   { value: 'exited', label: '已停止' },
   { value: 'paused', label: '已暂停' },
+  { value: 'restarting', label: '重启中' },
 ];
 
 const ContainerStateMapper = {
@@ -75,8 +76,14 @@ const ContainerStateMapper = {
   'running': { label: '运行中', badgeStatus: 'processing', color: '#1890ff' },
   'exited': { label: '已停止', badgeStatus: 'error', color: '#f5222d' },
   'paused': { label: '已暂停', badgeStatus: 'warning', color: '#faad14' },
+  'restarting': { label: '重启中', badgeStatus: 'processing', color: '#1890ff' },
   error: { label: '未知', badgeStatus: 'error', color: '#f5222d' },
 };
+
+const DevopsFlagArray = [
+  { value: 'true', label: '使用Devops构建' },
+  { value: 'false', label: '其他方式构建' },
+];
 
 export {
   LanguageArray,
@@ -90,4 +97,5 @@ export {
   BuildStateMapper,
   ContainerStateArray,
   ContainerStateMapper,
+  DevopsFlagArray,
 };
