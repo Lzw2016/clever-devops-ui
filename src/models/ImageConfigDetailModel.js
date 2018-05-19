@@ -2,6 +2,7 @@
 import { getCodeRepositoryById } from '../services/CodeRepositoryApi';
 import { getImageConfig } from '../services/ImageConfigApi';
 import { findImageBuildLog } from '../services/ImageBuildLogApi';
+import { listImage } from '../services/DockerImageApi';
 import { ModelInitState } from '../utils/constant';
 
 export default {
@@ -12,6 +13,7 @@ export default {
     serverUrl: undefined,
     imageConfig: undefined,
     codeRepository: undefined,
+    imageData: [],
     queryBuildLogParam: {
       ...ModelInitState.queryParam,
       repositoryId: undefined,
@@ -42,9 +44,19 @@ export default {
       if (!imageConfig) return;
       const codeRepository = yield call(getCodeRepositoryById, imageConfig.repositoryId);
       if (!codeRepository) return;
+      // 查询 imageData
+      yield put({ type: 'findImageData', payload: { allImages: true, withLabels: `ImageConfigId=${imageConfig.id}` } });
+      // 查询 buildLogData
       yield put({ type: 'findImageBuildLog', payload: { repositoryId: codeRepository.id, imageConfigId: imageConfig.id } });
       // 保存数据
       yield put({ type: 'save', payload: { imageConfig, codeRepository } });
+    },
+    *findImageData({ payload }, { call, put }) {
+      // 请求数据
+      const imageData = yield call(listImage, payload);
+      if (!imageData) return;
+      // 保存数据
+      yield put({ type: 'save', payload: { imageData } });
     },
     *findImageBuildLog({ payload }, { select, call, put }) {
       let { queryBuildLogParam, buildLogPagination } = yield select(state => state.ImageConfigDetailModel);

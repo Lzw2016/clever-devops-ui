@@ -56,3 +56,7 @@ export function formatThounsandsPercentage(num) {
 export function formatTenThounsandsPercentage(num) {
   return numeral(num).format('0.0000%', Math.floor);
 }
+
+export function bitToMB(size) {
+  return numeral(size / 1024 / 1024).format('0.000', Math.round);
+}

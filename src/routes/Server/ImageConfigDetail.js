@@ -5,6 +5,7 @@ import { Card, Button } from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import ProjectInfo from '../Common/ProjectInfo'
+import ImageList from '../Common/ImageList'
 import ImageBuildLogList from '../Common/ImageBuildLogList'
 import { AuthorizationTypeMapper, BuildStateMapper } from '../../utils/enum';
 // import classNames from 'classnames';
@@ -13,6 +14,7 @@ import styles from './ImageConfigDetail.less'
 @connect(({ ImageConfigDetailModel, loading }) => ({
   ImageConfigDetailModel,
   getPageDataLoading: loading.effects['ImageConfigDetailModel/getPageData'],
+  findImageDataLoading: loading.effects['ImageConfigDetailModel/findImageData'],
   findImageBuildLogLoading: loading.effects['ImageConfigDetailModel/findImageBuildLog'],
 }))
 export default class ImageConfigDetail extends PureComponent {
@@ -94,7 +96,7 @@ export default class ImageConfigDetail extends PureComponent {
   }
 
   render() {
-    const { dispatch, ImageConfigDetailModel, getPageDataLoading, findImageBuildLogLoading } = this.props;
+    const { dispatch, ImageConfigDetailModel, getPageDataLoading, findImageDataLoading, findImageBuildLogLoading } = this.props;
     const { tabActiveKey, tabList } = this.state;
     return (
       <PageHeaderLayout
@@ -119,7 +121,10 @@ export default class ImageConfigDetail extends PureComponent {
             />
           </div>
           <div style={{ display: tabActiveKey === 'ImageList' ? 'block' : 'none' }}>
-            ImageList
+            <ImageList
+              quetyLoading={findImageDataLoading}
+              data={ImageConfigDetailModel.imageData}
+            />
           </div>
           <div style={{ display: tabActiveKey === 'ContainerList' ? 'block' : 'none' }}>
             ContainerList
