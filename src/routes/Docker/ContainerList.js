@@ -223,7 +223,7 @@ export default class ContainerList extends PureComponent {
                   <a onClick={null}>重启</a>
                 </Menu.Item>
               ) : ''}
-              <Menu.Divider />
+              {lodash.indexOf(['running', 'paused'], record.State) !== -1 ? <Menu.Divider /> : ''}
               {lodash.indexOf(['running'], record.State) !== -1 ? (
                 <Menu.Item key="4">
                   <a onClick={null}>暂停</a>
