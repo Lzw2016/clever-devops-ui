@@ -4,17 +4,19 @@ import { Link } from 'dva/router';
 import { Card, Button } from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import ProjectInfo from '../Common/ProjectInfo'
-import ImageList from '../Common/ImageList'
-import ImageBuildLogList from '../Common/ImageBuildLogList'
+import ProjectInfo from '../Common/ProjectInfo';
+import ImageList from '../Common/ImageList';
+import ContainerList from '../Common/ContainerList';
+import ImageBuildLogList from '../Common/ImageBuildLogList';
 import { AuthorizationTypeMapper, BuildStateMapper } from '../../utils/enum';
 // import classNames from 'classnames';
-import styles from './ImageConfigDetail.less'
+import styles from './ImageConfigDetail.less';
 
 @connect(({ ImageConfigDetailModel, loading }) => ({
   ImageConfigDetailModel,
   getPageDataLoading: loading.effects['ImageConfigDetailModel/getPageData'],
   findImageDataLoading: loading.effects['ImageConfigDetailModel/findImageData'],
+  findContainerDataLoading: loading.effects['ImageConfigDetailModel/findContainerData'],
   findImageBuildLogLoading: loading.effects['ImageConfigDetailModel/findImageBuildLog'],
 }))
 export default class ImageConfigDetail extends PureComponent {
@@ -96,7 +98,7 @@ export default class ImageConfigDetail extends PureComponent {
   }
 
   render() {
-    const { dispatch, ImageConfigDetailModel, getPageDataLoading, findImageDataLoading, findImageBuildLogLoading } = this.props;
+    const { dispatch, ImageConfigDetailModel, getPageDataLoading, findImageDataLoading, findContainerDataLoading, findImageBuildLogLoading } = this.props;
     const { tabActiveKey, tabList } = this.state;
     return (
       <PageHeaderLayout
@@ -127,7 +129,11 @@ export default class ImageConfigDetail extends PureComponent {
             />
           </div>
           <div style={{ display: tabActiveKey === 'ContainerList' ? 'block' : 'none' }}>
-            ContainerList
+            <ContainerList
+              quetyLoading={findContainerDataLoading}
+              // data={[]}
+              data={ImageConfigDetailModel.containerData}
+            />
           </div>
           <div style={{ display: tabActiveKey === 'BuildImageHistory' ? 'block' : 'none' }}>
             <ImageBuildLogList

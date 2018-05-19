@@ -3,6 +3,7 @@ import { getCodeRepositoryById } from '../services/CodeRepositoryApi';
 import { getImageConfig } from '../services/ImageConfigApi';
 import { findImageBuildLog } from '../services/ImageBuildLogApi';
 import { listImage } from '../services/DockerImageApi';
+import { listContainers } from '../services/DockerContainersApi';
 import { ModelInitState } from '../utils/constant';
 
 export default {
@@ -14,6 +15,7 @@ export default {
     imageConfig: undefined,
     codeRepository: undefined,
     imageData: [],
+    containerData: [],
     queryBuildLogParam: {
       ...ModelInitState.queryParam,
       repositoryId: undefined,
@@ -46,6 +48,8 @@ export default {
       if (!codeRepository) return;
       // 查询 imageData
       yield put({ type: 'findImageData', payload: { allImages: true, withLabels: `ImageConfigId=${imageConfig.id}` } });
+      // 查询 containerData
+      yield put({ type: 'findContainerData', payload: { allContainers: true, withSizes: true, withLabels: `ImageConfigId=${imageConfig.id}` } });
       // 查询 buildLogData
       yield put({ type: 'findImageBuildLog', payload: { repositoryId: codeRepository.id, imageConfigId: imageConfig.id } });
       // 保存数据
@@ -57,6 +61,13 @@ export default {
       if (!imageData) return;
       // 保存数据
       yield put({ type: 'save', payload: { imageData } });
+    },
+    *findContainerData({ payload }, { call, put }) {
+      // 请求数据
+      const containerData = yield call(listContainers, payload);
+      if (!containerData) return;
+      // 保存数据
+      yield put({ type: 'save', payload: { containerData } });
     },
     *findImageBuildLog({ payload }, { select, call, put }) {
       let { queryBuildLogParam, buildLogPagination } = yield select(state => state.ImageConfigDetailModel);

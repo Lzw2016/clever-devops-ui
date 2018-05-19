@@ -3,41 +3,92 @@ import React, { PureComponent, Fragment } from 'react';
 // import { stringify } from 'qs';
 import lodash from 'lodash';
 import moment from 'moment';
-import { Table, Tooltip, Tag, Popover } from 'antd';
+import { Table, Tooltip, Tag, Popover, Divider, Badge } from 'antd';
 // import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { bitToMB } from '../../utils/fmt';
+import { ContainerStateMapper } from '../../utils/enum';
 // import classNames from 'classnames';
-import styles from './ImageList.less'
+import styles from './ContainerList.less'
 
-export default class ImageList extends PureComponent {
+export default class ContainerList extends PureComponent {
 
   render() {
     const { quetyLoading, data } = this.props;
     // 表格数据列配置
     const columns = [
       {
-        title: 'ID', dataIndex: 'Id', render: val => {
-          let text = '';
-          if (lodash.startsWith(val, 'sha256:')) {
-            text = val.substring(7, 19);
-          } else {
-            text = val.substring(0, 12);
-          }
+        title: 'Names', dataIndex: 'Names', render: (val, record) => {
+          // <span style={{ color: '#108ee9', cursor: 'pointer' }}>{item}</span>
+          // <Tag color="#108ee9">{item}</Tag>
           return (
-            <Tooltip title={val} placement="right" overlayClassName={styles.tooltipWidth}>
-              <span style={{ color: '#108ee9', cursor: 'pointer' }}>{text}</span>
+            <Tooltip title={record.Id} placement="right" overlayClassName={styles.tooltipWidth}>
+              {val.map((item, index) => (
+                <Fragment key={item}>
+                  {index > 0 ? <br /> : ''}
+                  <span style={{ color: '#108ee9', cursor: 'pointer' }}>{item}</span>
+                </Fragment>
+              ))}
             </Tooltip>
           );
         },
       },
       {
-        title: 'Tags', dataIndex: 'RepoTags', render: val => {
+        title: 'State', dataIndex: 'State', render: (val, record) => {
+          let state = ContainerStateMapper[val];
+          if (!state) state = ContainerStateMapper.error;
           return (
             <Fragment>
-              {val.map((item, index) => (
+              <Tag color={state.color}>{state.label}</Tag>
+              <Divider type="vertical" />
+              <Badge status={state.badgeStatus} text={record.Status} />
+            </Fragment>
+          );
+        },
+      },
+      {
+        title: 'Image', dataIndex: 'Image', render: val => {
+          if (lodash.startsWith(val, 'sha256:') && val.length === 71) {
+            return val.substring(7, 19);
+          }
+          return val;
+        },
+      },
+      {
+        title: 'IP Address', dataIndex: 'NetworkSettings', render: val => {
+          const ips = [];
+          if (val.Networks) {
+            const networks = lodash.valuesIn(val.Networks);
+            networks.forEach(item => ips.push(item.IPAddress));
+          }
+          return (
+            <Fragment>
+              {ips.map((item, index) => (
                 <Fragment key={item}>
                   {index > 0 ? <br /> : ''}
-                  <Tag color="#108ee9">{item}</Tag>
+                  <span>{item}</span>
+                </Fragment>
+              ))}
+            </Fragment>
+          );
+        },
+      },
+      {
+        title: 'Published Ports', dataIndex: 'Ports', render: val => {
+          const ports = [];
+          val.forEach(item => {
+            const mapping = { publicPort: undefined, privatePort: undefined };
+            if (item.IP && item.PublicPort && item.PublicPort !== 0) {
+              mapping.publicPort = `${item.IP}:${item.PublicPort}`;
+            }
+            mapping.privatePort = `${item.PrivatePort}${item.Type ? '/' : ''}${item.Type ? item.Type : ''}`
+            ports.push(mapping);
+          });
+          return (
+            <Fragment>
+              {ports.map((item, index) => (
+                <Fragment key={item.privatePort}>
+                  {index > 0 ? <br /> : ''}
+                  <span>{item.publicPort ? `${item.publicPort} -> ` : ''}{item.privatePort}</span>
                 </Fragment>
               ))}
             </Fragment>
@@ -79,7 +130,7 @@ export default class ImageList extends PureComponent {
           );
         },
       },
-      { title: 'Size', dataIndex: 'Size', render: val => `${bitToMB(val)}MB` },
+      { title: 'SizeRootFs', dataIndex: 'SizeRootFs', render: val => `${bitToMB(val)}MB` },
       { title: 'Created', dataIndex: 'Created', render: val => moment.unix(val).format('YYYY-MM-DD HH:mm:ss') },
       {
         title: '操作',

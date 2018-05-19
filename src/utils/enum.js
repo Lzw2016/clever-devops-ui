@@ -63,6 +63,21 @@ const BuildStateMapper = {
   error: { label: '未知', badgeStatus: 'error', color: '#f5222d' },
 };
 
+const ContainerStateArray = [
+  { value: 'created', label: '已创建' },
+  { value: 'running', label: '运行中' },
+  { value: 'exited', label: '已停止' },
+  { value: 'paused', label: '已暂停' },
+];
+
+const ContainerStateMapper = {
+  'created': { label: '已创建', badgeStatus: 'default', color: undefined },
+  'running': { label: '运行中', badgeStatus: 'processing', color: '#1890ff' },
+  'exited': { label: '已停止', badgeStatus: 'error', color: '#f5222d' },
+  'warning': { label: '已暂停', badgeStatus: 'warning', color: '#faad14' },
+  error: { label: '未知', badgeStatus: 'error', color: '#f5222d' },
+};
+
 export {
   LanguageArray,
   LanguageMapper,
@@ -73,4 +88,6 @@ export {
   BuildTypeArray,
   BuildStateArray,
   BuildStateMapper,
+  ContainerStateArray,
+  ContainerStateMapper,
 };
