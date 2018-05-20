@@ -3,7 +3,7 @@ import React, { PureComponent, Fragment } from 'react';
 // import { stringify } from 'qs';
 import lodash from 'lodash';
 import moment from 'moment';
-import { Table, Tooltip, Tag, Popover } from 'antd';
+import { Table, Tooltip, Tag, Popover, Divider } from 'antd';
 // import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { bitToMB } from '../../utils/fmt';
 // import classNames from 'classnames';
@@ -12,7 +12,7 @@ import styles from './ImageList.less'
 export default class ImageList extends PureComponent {
 
   render() {
-    const { quetyLoading, data } = this.props;
+    const { quetyLoading, data, createContainer } = this.props;
     // 表格数据列配置
     const columns = [
       {
@@ -85,8 +85,19 @@ export default class ImageList extends PureComponent {
         title: '操作',
         align: 'center',
         key: 'action',
-        render: () => {
-          return <a onClick={null}>详情</a>;
+        render: (val, record) => {
+          return (
+            <Fragment>
+              <a onClick={null}>详情</a>
+              {createContainer && lodash.isFunction(createContainer) ? (
+                <Fragment>
+                  <Divider type="vertical" />
+                  <a onClick={() => createContainer(record)}>创建容器</a>
+                </Fragment>
+              ) : ''}
+            </Fragment>
+          );
+          // return <a onClick={null}>详情</a>;
           // return <Link target="_blank" to={{ pathname: `/server/config/build-log/${record.serverUrl}`, search: stringify({ logId: record.id }) }}>构建日志</Link>;
         },
       },

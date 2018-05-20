@@ -2,7 +2,7 @@ import React, { PureComponent, Fragment } from 'react';
 import lodash from 'lodash';
 import moment from 'moment';
 import { connect } from 'dva';
-// import { Link } from 'dva/router';
+import { Link } from 'dva/router';
 import { Spin, Card, Form, Table, Divider, Row, Input, Select, Button, Badge, Popover, Icon, Tag, Menu, Dropdown } from 'antd';
 import BizIcon from '../../components/BizIcon';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -234,6 +234,11 @@ export default class ContainerList extends PureComponent {
         render: (val, record) => {
           const menu = (
             <Menu>
+              <Menu.Item key="-1">
+                <Link target="_blank" to={{ pathname: `/docker/container/log/${record.Id}` }}><Icon type="code" /> 容器日志</Link>
+              </Menu.Item>
+              {/* ---------------------------------------------------------------------------------------------------------------------------- */}
+              {lodash.indexOf(['created', 'exited', 'running', 'paused', 'restarting'], record.State) !== -1 ? <Menu.Divider /> : ''}
               {lodash.indexOf(['created', 'exited'], record.State) !== -1 ? (
                 <Menu.Item key="0">
                   <a onClick={() => this.start(record)}><BizIcon type="power-off" /> 启动</a>
@@ -254,6 +259,7 @@ export default class ContainerList extends PureComponent {
                   <a onClick={() => this.restart(record)}><BizIcon type="restart" /> 重启</a>
                 </Menu.Item>
               ) : ''}
+              {/* ---------------------------------------------------------------------------------------------------------------------------- */}
               {lodash.indexOf(['running', 'paused'], record.State) !== -1 ? <Menu.Divider /> : ''}
               {lodash.indexOf(['running'], record.State) !== -1 ? (
                 <Menu.Item key="4">
@@ -265,6 +271,7 @@ export default class ContainerList extends PureComponent {
                   <a onClick={() => this.unpause(record)}><BizIcon type="start" /> 继续</a>
                 </Menu.Item>
               ) : ''}
+              {/* ---------------------------------------------------------------------------------------------------------------------------- */}
               <Menu.Divider />
               <Menu.Item key="6">
                 <a onClick={() => this.remove(record)}><BizIcon type="remove" /> 删除</a>

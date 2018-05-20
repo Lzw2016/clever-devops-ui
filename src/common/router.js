@@ -115,6 +115,10 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['ContainerListModel'], () => import('../routes/Docker/ContainerList')),
       name: '容器列表',
     },
+    '/docker/container/log/:id': {
+      component: dynamicWrapper(app, ['ContainerLogModel'], () => import('../routes/Docker/ContainerLog')),
+      name: '容器日志',
+    },
     '/docker/image/:list': {
       component: dynamicWrapper(app, ['ImageListModel'], () => import('../routes/Docker/ImageList')),
       name: '镜像列表',

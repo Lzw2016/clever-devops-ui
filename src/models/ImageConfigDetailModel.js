@@ -1,6 +1,6 @@
-// import { message } from 'antd';
+import { message } from 'antd';
 import { getCodeRepositoryById } from '../services/CodeRepositoryApi';
-import { getImageConfig } from '../services/ImageConfigApi';
+import { getImageConfig, createContainer } from '../services/ImageConfigApi';
 import { findImageBuildLog } from '../services/ImageBuildLogApi';
 import { listImage } from '../services/DockerImageApi';
 import { listContainers } from '../services/DockerContainersApi';
@@ -79,6 +79,20 @@ export default {
       // 保存数据
       buildLogPagination = { ...buildLogPagination, current: pageNum, pageSize, total };
       yield put({ type: 'save', payload: { buildLogData: list, queryBuildLogParam, buildLogPagination } });
+    },
+    *createContainer({ payload }, { select, call, put }) {
+      // 加载中
+      yield put({ type: 'save', payload: { pageLoading: true } });
+      // 请求数据
+      const response = yield call(createContainer, payload.imageConfigId);
+      // 加载完成
+      yield put({ type: 'save', payload: { pageLoading: false } });
+      if (response) {
+        message.success(`创建容器成功 -> [${response.Id}]`);
+        const imageConfig = yield select(state => state.ImageConfigDetailModel.imageConfig);
+        // 重新加载数据 containerData
+        yield put({ type: 'findContainerData', payload: { allContainers: true, withSizes: true, withLabels: `ImageConfigId=${imageConfig.id}` } });
+      }
     },
   },
 

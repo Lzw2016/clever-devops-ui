@@ -50,7 +50,7 @@ const TerminalInit = {
   enableBold: false,
   bellStyle: 'sound',
   fontFamily: '"DejaVu Sans Mono", "Everson Mono", FreeMono, Menlo, Terminal, monospace, Consolas',
-  scrollback: 10000,
+  scrollback: 1000,
   tabStopWidth: 4,
 }
 

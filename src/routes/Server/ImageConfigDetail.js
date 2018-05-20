@@ -1,7 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Card, Button } from 'antd';
+import { Card, Spin, Button } from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import ProjectInfo from '../Common/ProjectInfo';
@@ -91,10 +91,18 @@ export default class ImageConfigDetail extends PureComponent {
     );
   }
 
-  // 审核操作
+  // 操作
   action = () => {
     const { dispatch, getPageDataLoading } = this.props;
     return <Button type="primary" icon="reload" loading={getPageDataLoading} onClick={() => dispatch({ type: 'ImageConfigDetailModel/getPageData' })}>刷新</Button>;
+  }
+
+  // 创建容器
+  createContainer = (image) => {
+    if (image && image.Labels && image.Labels.ImageConfigId) {
+      const { dispatch } = this.props;
+      dispatch({ type: 'ImageConfigDetailModel/createContainer', payload: { imageConfigId: image.Labels.ImageConfigId } })
+    }
   }
 
   render() {
@@ -110,41 +118,43 @@ export default class ImageConfigDetail extends PureComponent {
         tabActiveKey={tabActiveKey}
         onTabChange={(key) => this.setState({ tabActiveKey: key })}
       >
-        <Card loading={ImageConfigDetailModel.pageLoading || getPageDataLoading} bordered={false}>
-          <div style={{ display: tabActiveKey === 'Info' ? 'block' : 'none' }}>
-            <ProjectInfo
-              codeRepository={ImageConfigDetailModel.codeRepository}
-              imageConfig={ImageConfigDetailModel.imageConfig}
-              showBuildLogs={(buildLogs) => {
-                window.scrollTo(0, 0);
-                this.setState({ tabActiveKey: 'BuildImageLog' });
-                this.setBuildLogs(buildLogs);
-              }}
-            />
-          </div>
-          <div style={{ display: tabActiveKey === 'ImageList' ? 'block' : 'none' }}>
-            <ImageList
-              quetyLoading={findImageDataLoading}
-              data={ImageConfigDetailModel.imageData}
-            />
-          </div>
-          <div style={{ display: tabActiveKey === 'ContainerList' ? 'block' : 'none' }}>
-            <ContainerList
-              quetyLoading={findContainerDataLoading}
-              // data={[]}
-              data={ImageConfigDetailModel.containerData}
-            />
-          </div>
-          <div style={{ display: tabActiveKey === 'BuildImageHistory' ? 'block' : 'none' }}>
-            <ImageBuildLogList
-              dispatch={dispatch}
-              quetyLoading={findImageBuildLogLoading === undefined ? false : findImageBuildLogLoading}
-              queryParam={ImageConfigDetailModel.queryBuildLogParam}
-              data={ImageConfigDetailModel.buildLogData}
-              pagination={ImageConfigDetailModel.buildLogPagination}
-            />
-          </div>
-        </Card>
+        <Spin size='large' delay={100} spinning={ImageConfigDetailModel.pageLoading}>
+          <Card loading={getPageDataLoading} bordered={false}>
+            <div style={{ display: tabActiveKey === 'Info' ? 'block' : 'none' }}>
+              <ProjectInfo
+                codeRepository={ImageConfigDetailModel.codeRepository}
+                imageConfig={ImageConfigDetailModel.imageConfig}
+                showBuildLogs={(buildLogs) => {
+                  window.scrollTo(0, 0);
+                  this.setState({ tabActiveKey: 'BuildImageLog' });
+                  this.setBuildLogs(buildLogs);
+                }}
+              />
+            </div>
+            <div style={{ display: tabActiveKey === 'ImageList' ? 'block' : 'none' }}>
+              <ImageList
+                quetyLoading={findImageDataLoading}
+                data={ImageConfigDetailModel.imageData}
+                createContainer={(image) => this.createContainer(image)}
+              />
+            </div>
+            <div style={{ display: tabActiveKey === 'ContainerList' ? 'block' : 'none' }}>
+              <ContainerList
+                quetyLoading={findContainerDataLoading}
+                data={ImageConfigDetailModel.containerData}
+              />
+            </div>
+            <div style={{ display: tabActiveKey === 'BuildImageHistory' ? 'block' : 'none' }}>
+              <ImageBuildLogList
+                dispatch={dispatch}
+                quetyLoading={findImageBuildLogLoading === undefined ? false : findImageBuildLogLoading}
+                queryParam={ImageConfigDetailModel.queryBuildLogParam}
+                data={ImageConfigDetailModel.buildLogData}
+                pagination={ImageConfigDetailModel.buildLogPagination}
+              />
+            </div>
+          </Card>
+        </Spin>
       </PageHeaderLayout>
     );
   }

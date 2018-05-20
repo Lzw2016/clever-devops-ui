@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-// import { Link } from 'dva/router';
+import { Link } from 'dva/router';
 // import { stringify } from 'qs';
 import lodash from 'lodash';
 import moment from 'moment';
@@ -137,8 +137,8 @@ export default class ContainerList extends PureComponent {
         align: 'center',
         key: 'action',
         render: (val, record) => {
-          return <a onClick={null}>详情</a>;
-          // return <Link target="_blank" to={{ pathname: `/server/config/build-log/${record.serverUrl}`, search: stringify({ logId: record.id }) }}>构建日志</Link>;
+          // return <a onClick={null}>详情</a>;
+          return <Link target="_blank" to={{ pathname: `/docker/container/log/${record.Id}` }}>查看日志</Link>;
         },
       },
     ];
