@@ -3,7 +3,8 @@ import lodash from 'lodash';
 import moment from 'moment';
 import { connect } from 'dva';
 // import { Link } from 'dva/router';
-import { Spin, Card, Form, Table, Divider, Popconfirm, Row, Input, Select, Button, Badge, Popover, Icon, Tag, Menu, Dropdown } from 'antd';
+import { Spin, Card, Form, Table, Divider, Row, Input, Select, Button, Badge, Popover, Icon, Tag, Menu, Dropdown } from 'antd';
+import BizIcon from '../../components/BizIcon';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import { bitToMB } from '../../utils/fmt';
 import { ContainerStateArray, DevopsFlagArray, LanguageArray, ContainerStateMapper } from '../../utils/enum';
@@ -79,12 +80,42 @@ export default class ContainerList extends PureComponent {
     dispatch({ type: 'ContainerListModel/start', payload: record });
   }
 
+  stop = (record) => {
+    const { dispatch } = this.props;
+    dispatch({ type: 'ContainerListModel/stop', payload: record });
+  }
+
+  restart = (record) => {
+    const { dispatch } = this.props;
+    dispatch({ type: 'ContainerListModel/restart', payload: record });
+  }
+
+  kill = (record) => {
+    const { dispatch } = this.props;
+    dispatch({ type: 'ContainerListModel/kill', payload: record });
+  }
+
+  pause = (record) => {
+    const { dispatch } = this.props;
+    dispatch({ type: 'ContainerListModel/pause', payload: record });
+  }
+
+  unpause = (record) => {
+    const { dispatch } = this.props;
+    dispatch({ type: 'ContainerListModel/unpause', payload: record });
+  }
+
+  remove = (record) => {
+    const { dispatch } = this.props;
+    dispatch({ type: 'ContainerListModel/remove', payload: record });
+  }
+
   render() {
-    const { dispatch, ContainerListModel, quetyLoading } = this.props;
+    const { ContainerListModel, quetyLoading } = this.props;
     // 表格数据列配置
     const columns = [
       {
-        title: '容器名', dataIndex: 'Names', render: (val, record) => {
+        title: '容器名', dataIndex: 'Names', render: val => {
           return val.map((item, index) => (
             <Fragment key={item}>
               {index > 0 ? <br /> : ''}
@@ -205,38 +236,38 @@ export default class ContainerList extends PureComponent {
             <Menu>
               {lodash.indexOf(['created', 'exited'], record.State) !== -1 ? (
                 <Menu.Item key="0">
-                  <a onClick={() => this.start(record)}>启动</a>
+                  <a onClick={() => this.start(record)}><BizIcon type="power-off" /> 启动</a>
                 </Menu.Item>
               ) : ''}
               {lodash.indexOf(['running'], record.State) !== -1 ? (
                 <Menu.Item key="1">
-                  <a onClick={null}>停止</a>
+                  <a onClick={() => this.stop(record)}><BizIcon type="stop" /> 停止</a>
                 </Menu.Item>
               ) : ''}
               {lodash.indexOf(['running', 'paused', 'restarting'], record.State) !== -1 ? (
                 <Menu.Item key="2">
-                  <a onClick={null}>强制停止</a>
+                  <a onClick={() => this.kill(record)}><BizIcon type="shasijincheng" /> 强制停止</a>
                 </Menu.Item>
               ) : ''}
               {lodash.indexOf(['running', 'exited', 'paused'], record.State) !== -1 ? (
                 <Menu.Item key="3">
-                  <a onClick={null}>重启</a>
+                  <a onClick={() => this.restart(record)}><BizIcon type="restart" /> 重启</a>
                 </Menu.Item>
               ) : ''}
               {lodash.indexOf(['running', 'paused'], record.State) !== -1 ? <Menu.Divider /> : ''}
               {lodash.indexOf(['running'], record.State) !== -1 ? (
                 <Menu.Item key="4">
-                  <a onClick={null}>暂停</a>
+                  <a onClick={() => this.pause(record)}><BizIcon type="pause" /> 暂停</a>
                 </Menu.Item>
               ) : ''}
               {lodash.indexOf(['paused'], record.State) !== -1 ? (
                 <Menu.Item key="5">
-                  <a onClick={null}>继续</a>
+                  <a onClick={() => this.unpause(record)}><BizIcon type="start" /> 继续</a>
                 </Menu.Item>
               ) : ''}
               <Menu.Divider />
               <Menu.Item key="6">
-                <a onClick={null}>删除</a>
+                <a onClick={() => this.remove(record)}><BizIcon type="remove" /> 删除</a>
               </Menu.Item>
             </Menu>
           );
