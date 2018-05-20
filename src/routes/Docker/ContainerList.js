@@ -126,7 +126,7 @@ export default class ContainerList extends PureComponent {
       },
       {
         title: 'Label信息', dataIndex: 'Labels', render: val => {
-          if (!val.DevopsFlag || val.DevopsFlag !== 'true') {
+          if (!val || !val.DevopsFlag || val.DevopsFlag !== 'true') {
             return '-';
           }
           const content = (

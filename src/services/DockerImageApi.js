@@ -7,7 +7,7 @@ const { prefix, suffix } = ApiPathConfig;
 
 // 查询Docker Image
 export async function listImage(params) {
-  return request(`${prefix}/docker/image${suffix}?${stringify(params)}`);
+  return request(`${prefix}/docker/image${suffix}?${stringify(params, { indices: false })}`);
 }
 
 // 检查Docker Image

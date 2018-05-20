@@ -116,7 +116,7 @@ export const getRouterData = app => {
       name: '容器列表',
     },
     '/docker/image/:list': {
-      component: dynamicWrapper(app, [], () => import('../routes/Docker/ImageList')),
+      component: dynamicWrapper(app, ['ImageListModel'], () => import('../routes/Docker/ImageList')),
       name: '镜像列表',
     },
     '/docker/network/:list': {

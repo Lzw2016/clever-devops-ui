@@ -85,7 +85,7 @@ export default class ImageList extends PureComponent {
         title: '操作',
         align: 'center',
         key: 'action',
-        render: (val, record) => {
+        render: () => {
           return <a onClick={null}>详情</a>;
           // return <Link target="_blank" to={{ pathname: `/server/config/build-log/${record.serverUrl}`, search: stringify({ logId: record.id }) }}>构建日志</Link>;
         },
