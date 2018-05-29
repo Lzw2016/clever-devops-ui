@@ -77,7 +77,7 @@ export default {
       const response = yield call(updateCodeRepository, editCodeRepositoryData.id, editCodeRepositoryData);
       if (response) {
         yield put({ type: 'save', payload: { editCodeRepositoryData: null, editCodeRepositoryShow: false } });
-        message.success(`新增成功 -> [${editCodeRepositoryData.projectName}]`)
+        message.success(`更新成功 -> [${editCodeRepositoryData.projectName}]`)
         // 重新加载数据
         yield put({ type: 'findCodeRepository' });
       }
