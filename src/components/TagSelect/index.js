@@ -15,10 +15,14 @@ const TagSelectOption = ({ children, checked, onChange, value }) => (
 TagSelectOption.isTagSelectOption = true;
 
 class TagSelect extends Component {
-  state = {
-    expand: false,
-    value: this.props.value || this.props.defaultValue || [],
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      expand: false,
+      value: props.value || props.defaultValue || [],
+    };
+  }
+
   componentWillReceiveProps(nextProps) {
     if ('value' in nextProps && nextProps.value) {
       this.setState({ value: nextProps.value });
@@ -46,14 +50,13 @@ class TagSelect extends Component {
   getAllTags() {
     let { children } = this.props;
     children = React.Children.toArray(children);
-    const checkedTags = children
-      .filter(child => this.isTagSelectOption(child))
-      .map(child => child.props.value);
+    const checkedTags = children.filter(child => this.isTagSelectOption(child)).map(child => child.props.value);
     return checkedTags || [];
   }
 
   handleTagChange = (value, checked) => {
-    const checkedTags = [...this.state.value];
+    const { value: v } = this.state;
+    const checkedTags = [...v];
 
     const index = checkedTags.indexOf(value);
     if (checked && index === -1) {
@@ -65,17 +68,14 @@ class TagSelect extends Component {
   };
 
   handleExpand = () => {
+    const { expand } = this.state;
     this.setState({
-      expand: !this.state.expand,
+      expand: !expand,
     });
   };
 
   isTagSelectOption = node => {
-    return (
-      node &&
-      node.type &&
-      (node.type.isTagSelectOption || node.type.displayName === 'TagSelectOption')
-    );
+    return node && node.type && (node.type.isTagSelectOption || node.type.displayName === 'TagSelectOption');
   };
 
   render() {

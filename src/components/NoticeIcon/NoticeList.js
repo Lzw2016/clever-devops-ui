@@ -3,15 +3,7 @@ import { Avatar, List } from 'antd';
 import classNames from 'classnames';
 import styles from './NoticeList.less';
 
-export default function NoticeList({
-  data = [],
-  onClick,
-  onClear,
-  title,
-  locale,
-  emptyText,
-  emptyImage,
-}) {
+export default function NoticeList({ data = [], onClick, onClear, title, locale, emptyText, emptyImage }) {
   if (data.length === 0) {
     return (
       <div className={styles.notFound}>

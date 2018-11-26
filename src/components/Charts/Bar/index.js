@@ -19,6 +19,14 @@ class Bar extends Component {
     window.removeEventListener('resize', this.resize);
   }
 
+  handleRoot = n => {
+    this.root = n;
+  };
+
+  handleRef = n => {
+    this.node = n;
+  };
+
   @Bind()
   @Debounce(400)
   resize() {
@@ -46,23 +54,8 @@ class Bar extends Component {
     }
   }
 
-  handleRoot = n => {
-    this.root = n;
-  };
-
-  handleRef = n => {
-    this.node = n;
-  };
-
   render() {
-    const {
-      height,
-      title,
-      forceFit = true,
-      data,
-      color = 'rgba(24, 144, 255, 0.85)',
-      padding,
-    } = this.props;
+    const { height, title, forceFit = true, data, color = 'rgba(24, 144, 255, 0.85)', padding } = this.props;
 
     const { autoHideXLabels } = this.state;
 
@@ -87,19 +80,8 @@ class Bar extends Component {
       <div className={styles.chart} style={{ height }} ref={this.handleRoot}>
         <div ref={this.handleRef}>
           {title && <h4 style={{ marginBottom: 20 }}>{title}</h4>}
-          <Chart
-            scale={scale}
-            height={title ? height - 41 : height}
-            forceFit={forceFit}
-            data={data}
-            padding={padding || 'auto'}
-          >
-            <Axis
-              name="x"
-              title={false}
-              label={autoHideXLabels ? false : {}}
-              tickLine={autoHideXLabels ? false : {}}
-            />
+          <Chart scale={scale} height={title ? height - 41 : height} forceFit={forceFit} data={data} padding={padding || 'auto'}>
+            <Axis name="x" title={false} label={autoHideXLabels ? false : {}} tickLine={autoHideXLabels ? false : {}} />
             <Axis name="y" min={0} />
             <Tooltip showTitle={false} crosshairs={false} />
             <Geom type="interval" position="x*y" color={color} tooltip={tooltip} />

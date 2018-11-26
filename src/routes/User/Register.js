@@ -35,9 +35,10 @@ export default class Register extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    const account = this.props.form.getFieldValue('mail');
+    const { form, dispatch } = this.props;
+    const account = form.getFieldValue('mail');
     if (nextProps.register.status === 'ok') {
-      this.props.dispatch(
+      dispatch(
         routerRedux.push({
           pathname: '/user/register-result',
           state: {
@@ -78,13 +79,15 @@ export default class Register extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.form.validateFields({ force: true }, (err, values) => {
+    const { form, dispatch } = this.props;
+    form.validateFields({ force: true }, (err, values) => {
+      const { prefix } = this.state;
       if (!err) {
-        this.props.dispatch({
+        dispatch({
           type: 'register/submit',
           payload: {
             ...values,
-            prefix: this.state.prefix,
+            prefix,
           },
         });
       }
@@ -93,7 +96,8 @@ export default class Register extends Component {
 
   handleConfirmBlur = e => {
     const { value } = e.target;
-    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+    const { confirmDirty } = this.state;
+    this.setState({ confirmDirty: confirmDirty || !!value });
   };
 
   checkConfirm = (rule, value, callback) => {
@@ -116,7 +120,8 @@ export default class Register extends Component {
       this.setState({
         help: '',
       });
-      if (!this.state.visible) {
+      const { visible, confirmDirty } = this.state;
+      if (!visible) {
         this.setState({
           visible: !!value,
         });
@@ -125,7 +130,7 @@ export default class Register extends Component {
         callback('error');
       } else {
         const { form } = this.props;
-        if (value && this.state.confirmDirty) {
+        if (value && confirmDirty) {
           form.validateFields(['confirm'], { force: true });
         }
         callback();
@@ -159,7 +164,7 @@ export default class Register extends Component {
   render() {
     const { form, submitting } = this.props;
     const { getFieldDecorator } = form;
-    const { count, prefix } = this.state;
+    const { count, prefix, help, visible } = this.state;
     return (
       <div className={styles.main}>
         <h3>注册</h3>
@@ -178,20 +183,18 @@ export default class Register extends Component {
               ],
             })(<Input size="large" placeholder="邮箱" />)}
           </FormItem>
-          <FormItem help={this.state.help}>
+          <FormItem help={help}>
             <Popover
               content={
                 <div style={{ padding: '4px 0' }}>
                   {passwordStatusMap[this.getPasswordStatus()]}
                   {this.renderPasswordProgress()}
-                  <div style={{ marginTop: 10 }}>
-                    请至少输入 6 个字符。请不要使用容易被猜到的密码。
-                  </div>
+                  <div style={{ marginTop: 10 }}>请至少输入 6 个字符。请不要使用容易被猜到的密码。</div>
                 </div>
               }
               overlayStyle={{ width: 240 }}
               placement="right"
-              visible={this.state.visible}
+              visible={visible}
             >
               {getFieldDecorator('password', {
                 rules: [
@@ -217,12 +220,7 @@ export default class Register extends Component {
           </FormItem>
           <FormItem>
             <InputGroup compact>
-              <Select
-                size="large"
-                value={prefix}
-                onChange={this.changePrefix}
-                style={{ width: '20%' }}
-              >
+              <Select size="large" value={prefix} onChange={this.changePrefix} style={{ width: '20%' }}>
                 <Option value="86">+86</Option>
                 <Option value="87">+87</Option>
               </Select>
@@ -253,25 +251,14 @@ export default class Register extends Component {
                 })(<Input size="large" placeholder="验证码" />)}
               </Col>
               <Col span={8}>
-                <Button
-                  size="large"
-                  disabled={count}
-                  className={styles.getCaptcha}
-                  onClick={this.onGetCaptcha}
-                >
+                <Button size="large" disabled={count} className={styles.getCaptcha} onClick={this.onGetCaptcha}>
                   {count ? `${count} s` : '获取验证码'}
                 </Button>
               </Col>
             </Row>
           </FormItem>
           <FormItem>
-            <Button
-              size="large"
-              loading={submitting}
-              className={styles.submit}
-              type="primary"
-              htmlType="submit"
-            >
+            <Button size="large" loading={submitting} className={styles.submit} type="primary" htmlType="submit">
               注册
             </Button>
             <Link className={styles.login} to="/user/login">

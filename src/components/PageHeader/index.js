@@ -26,19 +26,47 @@ export default class PageHeader extends PureComponent {
     location: PropTypes.object,
     breadcrumbNameMap: PropTypes.object,
   };
+
+  state = {
+    breadcrumb: null,
+  };
+
+  componentDidMount() {
+    this.getBreadcrumbDom();
+  }
+
+  componentDidUpdate(preProps) {
+    const { tabActiveKey } = this.props;
+    if (preProps.tabActiveKey !== tabActiveKey) {
+      this.getBreadcrumbDom();
+    }
+  }
+
   onChange = key => {
-    if (this.props.onTabChange) {
-      this.props.onTabChange(key);
+    const { onTabChange } = this.props;
+    if (onTabChange) {
+      onTabChange(key);
     }
   };
+
   getBreadcrumbProps = () => {
+    const { routes, params, location, breadcrumbNameMap } = this.props;
+    const { routes: croutes, params: cparams, location: clocation, breadcrumbNameMap: cbreadcrumbNameMap } = this.context;
     return {
-      routes: this.props.routes || this.context.routes,
-      params: this.props.params || this.context.params,
-      routerLocation: this.props.location || this.context.location,
-      breadcrumbNameMap: this.props.breadcrumbNameMap || this.context.breadcrumbNameMap,
+      routes: routes || croutes,
+      params: params || cparams,
+      routerLocation: location || clocation,
+      breadcrumbNameMap: breadcrumbNameMap || cbreadcrumbNameMap,
     };
   };
+
+  getBreadcrumbDom = () => {
+    const breadcrumb = this.conversionBreadcrumbList();
+    this.setState({
+      breadcrumb,
+    });
+  };
+
   // Generated according to props
   conversionFromProps = () => {
     const { breadcrumbList, breadcrumbSeparator, linkElement = 'a' } = this.props;
@@ -60,6 +88,7 @@ export default class PageHeader extends PureComponent {
       </Breadcrumb>
     );
   };
+
   conversionFromLocation = (routerLocation, breadcrumbNameMap) => {
     const { breadcrumbSeparator, linkElement = 'a' } = this.props;
     // Convert the url to an array
@@ -70,11 +99,7 @@ export default class PageHeader extends PureComponent {
       const isLinkable = index !== pathSnippets.length - 1 && currentBreadcrumb.component;
       return currentBreadcrumb.name && !currentBreadcrumb.hideInBreadcrumb ? (
         <Breadcrumb.Item key={url}>
-          {createElement(
-            isLinkable ? linkElement : 'span',
-            { [linkElement === 'a' ? 'href' : 'to']: url },
-            currentBreadcrumb.name
-          )}
+          {createElement(isLinkable ? linkElement : 'span', { [linkElement === 'a' ? 'href' : 'to']: url }, currentBreadcrumb.name)}
         </Breadcrumb.Item>
       ) : null;
     });
@@ -96,6 +121,7 @@ export default class PageHeader extends PureComponent {
       </Breadcrumb>
     );
   };
+
   /**
    * 将参数转化为面包屑
    * Convert parameters into breadcrumbs
@@ -126,6 +152,7 @@ export default class PageHeader extends PureComponent {
     }
     return null;
   };
+
   // 渲染Breadcrumb 子节点
   // Render the Breadcrumb child node
   itemRender = (route, params, routes, paths) => {
@@ -146,20 +173,10 @@ export default class PageHeader extends PureComponent {
   };
 
   render() {
-    const {
-      title,
-      logo,
-      action,
-      content,
-      extraContent,
-      tabList,
-      className,
-      tabActiveKey,
-      tabDefaultActiveKey,
-      tabBarExtraContent,
-    } = this.props;
+    const { title, logo, action, content, extraContent, tabList, className, tabActiveKey, tabDefaultActiveKey, tabBarExtraContent } = this.props;
+    const { breadcrumb } = this.state;
+
     const clsString = classNames(styles.pageHeader, className);
-    const breadcrumb = this.conversionBreadcrumbList();
     const activeKeyProps = {};
     if (tabDefaultActiveKey !== undefined) {
       activeKeyProps.defaultActiveKey = tabDefaultActiveKey;
@@ -184,17 +201,13 @@ export default class PageHeader extends PureComponent {
             </div>
           </div>
         </div>
-        {tabList &&
-          tabList.length && (
-            <Tabs
-              className={styles.tabs}
-              {...activeKeyProps}
-              onChange={this.onChange}
-              tabBarExtraContent={tabBarExtraContent}
-            >
-              {tabList.map(item => <TabPane tab={item.tab} key={item.key} />)}
-            </Tabs>
-          )}
+        {tabList && tabList.length ? (
+          <Tabs className={styles.tabs} {...activeKeyProps} onChange={this.onChange} tabBarExtraContent={tabBarExtraContent}>
+            {tabList.map(item => (
+              <TabPane tab={item.tab} key={item.key} />
+            ))}
+          </Tabs>
+        ) : null}
       </div>
     );
   }

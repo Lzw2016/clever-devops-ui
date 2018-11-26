@@ -10,9 +10,12 @@ export default {
   },
 
   effects: {
-    *submit(_, { call, put }) {
-      const response = yield call(fakeRegister);
-      yield put({ type: 'registerHandle', payload: response });
+    *submit({ payload }, { call, put }) {
+      const response = yield call(fakeRegister, payload);
+      yield put({
+        type: 'registerHandle',
+        payload: response,
+      });
     },
   },
 
@@ -20,7 +23,10 @@ export default {
     registerHandle(state, { payload }) {
       setAuthority('user');
       reloadAuthorized();
-      return { ...state, status: payload.status };
+      return {
+        ...state,
+        status: payload.status,
+      };
     },
   },
 };

@@ -54,15 +54,7 @@ Shape.registerShape('point', 'pointer', {
 @autoHeight()
 export default class Gauge extends React.Component {
   render() {
-    const {
-      title,
-      height,
-      percent,
-      forceFit = true,
-      formatter = defaultFormatter,
-      color = '#2F9CFF',
-      bgColor = '#F0F2F5',
-    } = this.props;
+    const { title, height, percent, forceFit = true, formatter = defaultFormatter, color = '#2F9CFF', bgColor = '#F0F2F5' } = this.props;
     const cols = {
       value: {
         type: 'linear',
@@ -153,14 +145,7 @@ export default class Gauge extends React.Component {
             }}
           />
         </Guide>
-        <Geom
-          line={false}
-          type="point"
-          position="value*1"
-          shape="pointer"
-          color={color}
-          active={false}
-        />
+        <Geom line={false} type="point" position="value*1" shape="pointer" color={color} active={false} />
       </Chart>
     );
   }

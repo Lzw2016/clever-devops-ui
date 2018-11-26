@@ -16,7 +16,8 @@ export default class Radar extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.data !== nextProps.data) {
+    const { data } = this.props;
+    if (data !== nextProps.data) {
       this.getLengendData();
     }
   }
@@ -73,16 +74,7 @@ export default class Radar extends Component {
   };
 
   render() {
-    const defaultColors = [
-      '#1890FF',
-      '#FACC14',
-      '#2FC25B',
-      '#8543E0',
-      '#F04864',
-      '#13C2C2',
-      '#fa8c16',
-      '#a0d911',
-    ];
+    const defaultColors = ['#1890FF', '#FACC14', '#2FC25B', '#8543E0', '#F04864', '#13C2C2', '#fa8c16', '#a0d911'];
 
     const {
       data = [],
@@ -110,15 +102,7 @@ export default class Radar extends Component {
     return (
       <div className={styles.radar} style={{ height }}>
         {title && <h4>{title}</h4>}
-        <Chart
-          scale={scale}
-          height={chartHeight}
-          forceFit={forceFit}
-          data={data}
-          padding={padding}
-          animate={animate}
-          onGetG2Instance={this.getG2Instance}
-        >
+        <Chart scale={scale} height={chartHeight} forceFit={forceFit} data={data} padding={padding} animate={animate} onGetG2Instance={this.getG2Instance}>
           <Tooltip />
           <Coord type="polar" />
           <Axis
@@ -142,22 +126,12 @@ export default class Radar extends Component {
             }}
           />
           <Geom type="line" position="label*value" color={['name', colors]} size={1} />
-          <Geom
-            type="point"
-            position="label*value"
-            color={['name', colors]}
-            shape="circle"
-            size={3}
-          />
+          <Geom type="point" position="label*value" color={['name', colors]} shape="circle" size={3} />
         </Chart>
         {hasLegend && (
           <Row className={styles.legend}>
             {legendData.map((item, i) => (
-              <Col
-                span={24 / legendData.length}
-                key={item.name}
-                onClick={() => this.handleLegendClick(item, i)}
-              >
+              <Col span={24 / legendData.length} key={item.name} onClick={() => this.handleLegendClick(item, i)}>
                 <div className={styles.legendItem}>
                   <p>
                     <span

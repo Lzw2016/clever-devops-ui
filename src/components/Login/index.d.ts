@@ -18,6 +18,8 @@ export interface LoginItemProps {
   rules?: any[];
   style?: React.CSSProperties;
   onGetCaptcha?: () => void;
+  placeholder?: string;
+  buttonText?: React.ReactNode;
 }
 
 export class LoginItem extends React.Component<LoginItemProps, any> {}

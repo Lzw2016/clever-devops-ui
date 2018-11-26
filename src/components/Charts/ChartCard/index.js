@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Spin } from 'antd';
+import { Card } from 'antd';
 import classNames from 'classnames';
 
 import styles from './index.less';
@@ -19,17 +19,7 @@ const renderTotal = total => {
   return totalDom;
 };
 
-const ChartCard = ({
-  loading = false,
-  contentHeight,
-  title,
-  avatar,
-  action,
-  total,
-  footer,
-  children,
-  ...rest
-}) => {
+const ChartCard = ({ loading = false, contentHeight, title, avatar, action, total, footer, children, ...rest }) => {
   const content = (
     <div className={styles.chartCard}>
       <div
@@ -64,12 +54,8 @@ const ChartCard = ({
   );
 
   return (
-    <Card bodyStyle={{ padding: '20px 24px 8px 24px' }} {...rest}>
-      {
-        <Spin spinning={loading} wrapperClassName={styles.spin}>
-          {content}
-        </Spin>
-      }
+    <Card loading={loading} bodyStyle={{ padding: '20px 24px 8px 24px' }} {...rest}>
+      {content}
     </Card>
   );
 };

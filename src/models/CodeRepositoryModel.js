@@ -33,10 +33,10 @@ export default {
       // 请求数据
       const response = yield call(findCodeRepository, queryParam);
       if (!response) return;
-      const { list, pageSize, pageNum, total } = response;
+      const { records, size, current, total } = response;
       // 保存数据
-      pagination = { ...pagination, current: pageNum, pageSize, total };
-      yield put({ type: 'save', payload: { data: list, queryParam, pagination } });
+      pagination = { ...pagination, current, pageSize: size, total };
+      yield put({ type: 'save', payload: { data: records, queryParam, pagination } });
     },
     *deleteRepository({ payload }, { call, put }) {
       // 删除数据

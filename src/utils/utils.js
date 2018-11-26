@@ -1,4 +1,7 @@
 import moment from 'moment';
+import lodash from 'lodash';
+import { parse, stringify } from 'qs';
+import { LocaleLanguage, SystemInfo } from './constant';
 
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
@@ -39,10 +42,7 @@ export function getTimeDistance(type) {
     const nextYear = nextDate.year();
     const nextMonth = nextDate.month();
 
-    return [
-      moment(`${year}-${fixedZero(month + 1)}-01 00:00:00`),
-      moment(moment(`${nextYear}-${fixedZero(nextMonth + 1)}-01 00:00:00`).valueOf() - 1000),
-    ];
+    return [moment(`${year}-${fixedZero(month + 1)}-01 00:00:00`), moment(moment(`${nextYear}-${fixedZero(nextMonth + 1)}-01 00:00:00`).valueOf() - 1000)];
   }
 
   if (type === 'year') {
@@ -70,14 +70,23 @@ export function getPlainNode(nodeList, parentPath = '') {
   return arr;
 }
 
+function accMul(arg1, arg2) {
+  let m = 0;
+  const s1 = arg1.toString();
+  const s2 = arg2.toString();
+  m += s1.split('.').length > 1 ? s1.split('.')[1].length : 0;
+  m += s2.split('.').length > 1 ? s2.split('.')[1].length : 0;
+  return (Number(s1.replace('.', '')) * Number(s2.replace('.', ''))) / 10 ** m;
+}
+
 export function digitUppercase(n) {
   const fraction = ['角', '分'];
   const digit = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
-  const unit = [['元', '万', '亿'], ['', '拾', '佰', '仟']];
+  const unit = [['元', '万', '亿'], ['', '拾', '佰', '仟', '万']];
   let num = Math.abs(n);
   let s = '';
   fraction.forEach((item, index) => {
-    s += (digit[Math.floor(num * 10 * 10 ** index) % 10] + item).replace(/零./, '');
+    s += (digit[Math.floor(accMul(num, 10 * 10 ** index)) % 10] + item).replace(/零./, '');
   });
   s = s || '整';
   num = Math.floor(num);
@@ -114,11 +123,10 @@ function getRenderArr(routes) {
   let renderArr = [];
   renderArr.push(routes[0]);
   for (let i = 1; i < routes.length; i += 1) {
-    let isAdd = false;
-    // 是否包含
-    isAdd = renderArr.every(item => getRelation(item, routes[i]) === 3);
     // 去重
     renderArr = renderArr.filter(item => getRelation(item, routes[i]) !== 1);
+    // 是否包含
+    const isAdd = renderArr.every(item => getRelation(item, routes[i]) === 3);
     if (isAdd) {
       renderArr.push(routes[i]);
     }
@@ -133,9 +141,7 @@ function getRenderArr(routes) {
  * @param {routerData} routerData
  */
 export function getRoutes(path, routerData) {
-  let routes = Object.keys(routerData).filter(
-    routePath => routePath.indexOf(path) === 0 && routePath !== path
-  );
+  let routes = Object.keys(routerData).filter(routePath => routePath.indexOf(path) === 0 && routePath !== path);
   // Replace path to '' eg. path='user' /user/name => name
   routes = routes.map(item => item.replace(path, ''));
   // Get the route to be rendered to remove the deep rendering
@@ -153,9 +159,54 @@ export function getRoutes(path, routerData) {
   return renderRoutes;
 }
 
+export function getPageQuery() {
+  return parse(window.location.href.split('?')[1]);
+}
+
+export function getQueryPath(path = '', query = {}) {
+  const search = stringify(query);
+  if (search.length) {
+    return `${path}?${search}`;
+  }
+  return path;
+}
+
 /* eslint no-useless-escape:0 */
-const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/g;
+const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
 
 export function isUrl(path) {
   return reg.test(path);
+}
+
+// 设置系统语言
+export function changeLocale(locale) {
+  if (!window.localStorage) return;
+  const currentLocale = localStorage.getItem(SystemInfo.languageConfigName);
+  if (currentLocale === locale) return;
+  // 不支持的语言
+  if (lodash.values(LocaleLanguage).findIndex(item => item.locale === locale) === -1) return;
+  window.localStorage.setItem(SystemInfo.languageConfigName, locale);
+  window.location.reload();
+}
+
+// 根据字符串长度截取字符串(一个中文长度为2，英文字母长度为1)
+export function cutOffStr(str = "", maxLength = 8, suffix = '...') {
+  if (!str) return str;
+  let length = 0;
+  const result = [];
+  for (let i = 0; i < str.length; i++) {
+    const code = str.charCodeAt(i);
+    const char = str.charAt(i);
+    if (code >= 0 && code <= 127) {
+      length += 1;
+    } else {
+      length += 2;
+    }
+    if (length > maxLength) {
+      result.push(suffix);
+      break;
+    }
+    result.push(char);
+  }
+  return result.join('');
 }

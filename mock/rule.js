@@ -7,10 +7,9 @@ for (let i = 0; i < 46; i += 1) {
     key: i,
     disabled: i % 6 === 0,
     href: 'https://ant.design',
-    avatar: [
-      'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
-      'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
-    ][i % 2],
+    avatar: ['https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png', 'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png'][
+      i % 2
+    ],
     no: `TradeCode ${i}`,
     title: `一个任务名称 ${i}`,
     owner: '曲丽丽',
@@ -47,9 +46,7 @@ export function getRule(req, res, u) {
     const status = params.status.split(',');
     let filterDataSource = [];
     status.forEach(s => {
-      filterDataSource = filterDataSource.concat(
-        [...dataSource].filter(data => parseInt(data.status, 10) === parseInt(s[0], 10))
-      );
+      filterDataSource = filterDataSource.concat([...dataSource].filter(data => parseInt(data.status, 10) === parseInt(s[0], 10)));
     });
     dataSource = filterDataSource;
   }
@@ -98,10 +95,9 @@ export function postRule(req, res, u, b) {
       tableListDataSource.unshift({
         key: i,
         href: 'https://ant.design',
-        avatar: [
-          'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
-          'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',
-        ][i % 2],
+        avatar: ['https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png', 'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png'][
+          i % 2
+        ],
         no: `TradeCode ${i}`,
         title: `一个任务名称 ${i}`,
         owner: '曲丽丽',

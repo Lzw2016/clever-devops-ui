@@ -6,11 +6,12 @@ import Bind from 'lodash-decorators/bind';
 import classNames from 'classnames';
 import autoHeight from '../autoHeight';
 import styles from './index.less';
+import imgUrl from '../../../assets/TagCloud.png';
 
 /* eslint no-underscore-dangle: 0 */
 /* eslint no-param-reassign: 0 */
 
-const imgUrl = 'https://gw.alipayobjects.com/zos/rmsportal/gWyeGLCdFFRavBGIDzWk.png';
+// const imgUrl = 'https://gw.alipayobjects.com/zos/rmsportal/gWyeGLCdFFRavBGIDzWk.png';
 
 @autoHeight()
 class TagCloud extends Component {
@@ -25,7 +26,8 @@ class TagCloud extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (JSON.stringify(nextProps.data) !== JSON.stringify(this.props.data)) {
+    const { data } = this.props;
+    if (JSON.stringify(nextProps.data) !== JSON.stringify(data)) {
       this.renderChart(nextProps);
     }
   }
@@ -136,11 +138,7 @@ class TagCloud extends Component {
     const { dv, w, h } = this.state;
 
     return (
-      <div
-        className={classNames(styles.tagCloud, className)}
-        style={{ width: '100%', height }}
-        ref={this.saveRootRef}
-      >
+      <div className={classNames(styles.tagCloud, className)} style={{ width: '100%', height }} ref={this.saveRootRef}>
         {dv && (
           <Chart
             width={w}

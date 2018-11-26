@@ -4,18 +4,26 @@ import { notification } from 'antd';
 import { CodeMessage } from './constant';
 
 // 全局请求配置
-axios.interceptors.request.use(config => {
-  const baseURL = '/';
-  const timeout = 30000;
-  const validateStatus = (status) => { return status >= 200 && status < 300; };
-  return { ...config, baseURL, timeout, validateStatus };
-}, error => {
-  notification.error({ message: '请求发送失败', description: '发送请求给服务端失败，请检查电脑网络，再重试' });
-  return Promise.reject(error);
-});
+axios.interceptors.request.use(
+  config => {
+    const baseURL = '/';
+    const timeout = 30000;
+    const validateStatus = status => {
+      return status >= 200 && status < 300;
+    };
+    return { ...config, baseURL, timeout, validateStatus };
+  },
+  error => {
+    notification.error({
+      message: '请求发送失败',
+      description: '发送请求给服务端失败，请检查电脑网络，再重试',
+    });
+    return Promise.reject(error);
+  }
+);
 
 // 请求异常通知
-const errorNotice = (error) => {
+const errorNotice = error => {
   const { response } = error;
   if (error && response) {
     const { data } = response;
@@ -28,7 +36,10 @@ const errorNotice = (error) => {
       return true;
     }
     const errortext = CodeMessage[response.status] || response.statusText;
-    notification.error({ message: `请求错误,响应状态码:${response.status}`, description: errortext });
+    notification.error({
+      message: `请求错误,响应状态码:${response.status}`,
+      description: errortext,
+    });
   } else {
     notification.error({ message: '请求服务端异常', description: '服务器异常' });
   }
@@ -36,19 +47,22 @@ const errorNotice = (error) => {
 };
 
 //  全局拦截配置
-axios.interceptors.response.use(response => {
-  return response;
-}, error => {
-  // resolve 通过， reject 驳回
-  if (errorNotice(error)) {
-    return Promise.reject(error.response);
-  } else {
-    return Promise.reject(error);
+axios.interceptors.response.use(
+  response => {
+    return response;
+  },
+  error => {
+    // resolve 通过， reject 驳回
+    if (errorNotice(error)) {
+      return Promise.reject(error.response);
+    } else {
+      return Promise.reject(error);
+    }
   }
-});
+);
 
 // 处理响应数据
-const transformResponse = (response) => {
+const transformResponse = response => {
   if (response.data) {
     return response.data;
   }

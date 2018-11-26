@@ -1,10 +1,40 @@
-// 系统常量
+// 全局常量
+import React, { Fragment } from 'react';
+import { Icon } from 'antd';
 
-const SystemInfo = {
-  name: 'DevOps',
-  description: 'DevOps - 微服务构建发布管理系统',
+// 系统支持的语言
+const LocaleLanguage = {
+  zh_CN: { locale: 'zh-CN', language: '中文' },
+  en_US: { locale: 'en-US', language: 'English' },
 };
 
+// 系统信息
+const SystemInfo = {
+  languageConfigName: 'Language',
+  currentLocale: null,
+  name: 'DevOps',
+  description: 'DevOps - 微服务构建发布管理系统',
+  copyright: (
+    <Fragment>
+      Copyright <Icon type="copyright" /> 2018 clever-devops版权所有
+    </Fragment>
+  ),
+  copyrightLinks: [
+    { key: 'help', title: '帮助', href: '', blankTarget: true },
+    { key: 'privacy', title: '隐私', href: '', blankTarget: true },
+    { key: 'terms', title: '条款', href: '', blankTarget: true },
+  ],
+  hiddenFooter: false,
+  localStorageAuthorityKey: 'clever-devops',
+};
+
+// Layout 配置
+const LayoutConfig = {
+  // 左侧菜单栏宽度配置
+  siderMenuWidth: 200,
+};
+
+// HTTP 状态码错误说明
 const CodeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
@@ -23,13 +53,11 @@ const CodeMessage = {
   504: '网关超时。',
 };
 
-const ApiPathConfig = {
-  prefix: '/api/devops',
-  suffix: '.json',
-};
-
+// Model 初始化值配置
 const ModelInitState = {
-  queryParam: { pageSize: 10, pageNo: 1 },
+  // 请求 “分页参数” 和 “排序参数” 默认值配置
+  queryParam: { pageSize: 10, pageNo: 1, orderField: undefined, sort: undefined },
+  // 分页参数默认值配置
   pagination: {
     defaultCurrent: 1,
     defaultPageSize: 10,
@@ -42,7 +70,24 @@ const ModelInitState = {
     pageSize: 10,
     total: 0,
   },
-}
+};
+
+// 加密解密配置
+const CryptoConfig = {
+  ManageAES: {
+    key: '636c657665722d73656375726974792d',
+    iv: 'f0021ea5a06d5a7bade961afe47e9ad9',
+  },
+  LoginAES: {
+    key: '636c657665722d736563757288888888',
+    iv: '636c657665722d736563757266666666',
+  },
+};
+
+const ApiPathConfig = {
+  prefix: '/api/devops',
+  suffix: '.json',
+};
 
 const TerminalInit = {
   cursorBlink: true,
@@ -67,12 +112,16 @@ const WebSocketUrls = {
   serverLog: `ws://${LocationParam.host}/server_log`,
 };
 
+
 export {
+  LocaleLanguage,
   SystemInfo,
+  LayoutConfig,
   CodeMessage,
-  ApiPathConfig,
   ModelInitState,
+  CryptoConfig,
+  ApiPathConfig,
   TerminalInit,
-  WebSocketUrls,
   LocationParam,
+  WebSocketUrls,
 };
