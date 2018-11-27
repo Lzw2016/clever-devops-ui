@@ -74,11 +74,14 @@ export const getRouterData = app => {
     '/': {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
-    '/dashboard': {
-      component: dynamicWrapper(app, [], () => import('../routes/Dashboard')),
-      // hideInBreadcrumb: true,
-      // name: '工作台',
-      // authority: 'admin',
+    // '/dashboard': {
+    //   component: dynamicWrapper(app, [], () => import('../routes/Dashboard')),
+    //   // hideInBreadcrumb: true,
+    //   // name: '工作台',
+    //   // authority: 'admin',
+    // },
+    '/server/repository/list': {
+      component: dynamicWrapper(app, ['CodeRepositoryModel'], () => import('../routes/Server/CodeRepository')),
     },
     '/server/repository/:list': {
       component: dynamicWrapper(app, ['CodeRepositoryModel'], () => import('../routes/Server/CodeRepository')),

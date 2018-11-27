@@ -108,9 +108,9 @@ const LocationParam = {
 }
 
 const WebSocketUrls = {
-  buildImage: `ws://${LocationParam.host}/build_image`,
-  serverLog: `ws://${LocationParam.host}/server_log`,
-  serverStats: `ws://${LocationParam.host}/server_stats`,
+  buildImage: `ws://${LocationParam.host}/ws/build_image`,
+  serverLog: `ws://${LocationParam.host}/ws/server_log`,
+  serverStats: `ws://${LocationParam.host}/ws/server_stats`,
 };
 
 const ExternalUrl = {

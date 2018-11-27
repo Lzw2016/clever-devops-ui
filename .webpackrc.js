@@ -37,9 +37,10 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^/api': '/api' },
     },
-    '/': {
+    '/ws': {
       target: 'http://localhost:28081/',
       ws: true,
+      pathRewrite: { "^/ws": "/ws" }
     },
   },
 };

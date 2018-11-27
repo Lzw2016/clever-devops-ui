@@ -23,7 +23,7 @@ export default class ImageConfigAdd extends PureComponent {
   onChangeProjectName = (value, option) => {
     const { dispatch, form: { setFields } } = this.props;
     setFields({ branch: { value: undefined } });
-    if(!option) return;
+    if (!option) return;
     const { data } = option.props;
     // 保存选择项目
     dispatch({ type: 'ImageConfigModel/save', payload: { selectRepository: data } });
@@ -47,6 +47,7 @@ export default class ImageConfigAdd extends PureComponent {
     const { ImageConfigData, visible, confirmLoading, onCancel, onCreate, form } = this.props;
     const { ImageConfigModel: { repositoryData, addAllGitBranch }, findCodeRepositoryLoading, getAllGitBranchLoading } = this.props;
     const { getFieldDecorator } = form;
+    console.log(this.props);
     // 设置默认值
     if (ImageConfigData) {
       if (!ImageConfigData.dockerFilePath) ImageConfigData.dockerFilePath = './Dockerfile';
@@ -55,7 +56,7 @@ export default class ImageConfigAdd extends PureComponent {
       if (!ImageConfigData.serverPorts) ImageConfigData.serverPorts = '9066';
     }
     return (
-      <Modal width={600} visible={visible} confirmLoading={confirmLoading} title="新增服务配置" okText="新增" onCancel={onCancel} onOk={onCreate} maskClosable={false} >
+      <Modal width={600} visible={visible} confirmLoading={confirmLoading} title="新增服务配置" okText="新增" onCancel={onCancel} onOk={onCreate} maskClosable={false}>
         <Form layout="inline" className={styles.form}>
           <Row gutter={{ md: 12, lg: 12, xl: 12 }}>
             <Form.Item label="服务域名">
