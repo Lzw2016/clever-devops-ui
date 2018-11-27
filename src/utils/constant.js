@@ -110,8 +110,12 @@ const LocationParam = {
 const WebSocketUrls = {
   buildImage: `ws://${LocationParam.host}/build_image`,
   serverLog: `ws://${LocationParam.host}/server_log`,
+  serverStats: `ws://${LocationParam.host}/server_stats`,
 };
 
+const ExternalUrl = {
+  Portainer: "http://39.108.68.132:9000/",
+};
 
 export {
   LocaleLanguage,
@@ -124,4 +128,5 @@ export {
   TerminalInit,
   LocationParam,
   WebSocketUrls,
+  ExternalUrl,
 };

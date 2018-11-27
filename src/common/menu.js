@@ -1,4 +1,5 @@
 import { isUrl } from '../utils/utils';
+import { ExternalUrl } from '../utils/constant';
 
 const menuData = [
   // {
@@ -22,6 +23,13 @@ const menuData = [
     name: '服务列表',
     icon: 'fuwuliebiao',
     path: 'server/list/:list',
+  },
+  {
+    name: '转到Portainer',
+    // icon: 'url',
+    icon: 'tiaozhuan1',
+    path: ExternalUrl.Portainer,
+    target: '_blank',
   },
   {
     name: 'Docker管理',
