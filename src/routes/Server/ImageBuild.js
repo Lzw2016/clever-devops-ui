@@ -2,6 +2,8 @@ import React, { PureComponent, Fragment } from 'react';
 // import { parse } from 'qs';
 import lodash from 'lodash';
 import moment from 'moment';
+import Debounce from 'lodash-decorators/debounce';
+import Bind from 'lodash-decorators/bind';
 import { connect } from 'dva';
 import { Card } from 'antd';
 import { Link } from 'dva/router';
@@ -21,6 +23,7 @@ import xtermStyles from '../Common/xterm.less'
 export default class ImageBuild extends PureComponent {
 
   state = {
+    screenHeight: document.documentElement.clientHeight,
     showBuildTerminalId: 'showBuildTerminalId',
     isBuilding: false,
     buildState: undefined,
@@ -31,24 +34,37 @@ export default class ImageBuild extends PureComponent {
 
   // 数据初始化
   componentDidMount() {
+    window.addEventListener('resize', this.handleHeight);
     const { dispatch, match: { params } } = this.props;
     dispatch({ type: 'ImageBuildModel/save', payload: { serverUrl: params.serverUrl } });
     dispatch({ type: 'ImageBuildModel/getPageData' });
   }
 
   componentDidUpdate() {
+    if (this.buildTerminal) {
+      this.buildTerminal.fit();
+    }
     const { ImageBuildModel: { imageConfig, codeRepository }, getPageDataLoading } = this.props;
     if (getPageDataLoading || !imageConfig || !codeRepository) return;
     lodash.delay(() => this.initBuildTerminal(), 100);
   }
 
   componentWillUnmount() {
+    window.removeEventListener('resize', this.handleHeight);
     if (this.buildTerminal) {
       this.buildTerminal.destroy();
     }
     const { stopTimer } = this.state;
     if (stopTimer) clearInterval(stopTimer);
   }
+
+  // 动态设置高度
+  @Bind()
+  @Debounce(400)
+  handleHeight = () => {
+    const screenHeight = document.documentElement.clientHeight;
+    this.setState({ screenHeight });
+  };
 
   // 初始化控制台 xterm
   initBuildTerminal = () => {
@@ -134,6 +150,9 @@ export default class ImageBuild extends PureComponent {
   }
 
   render() {
+    let { screenHeight } = this.state;
+    screenHeight -= 430;
+    if (screenHeight < 350) screenHeight = 515;
     const { ImageBuildModel: { imageConfig, codeRepository }, getPageDataLoading } = this.props;
     const { showBuildTerminalId } = this.state;
     if (getPageDataLoading || !imageConfig || !codeRepository) return <Card loading={true} />;
@@ -141,7 +160,7 @@ export default class ImageBuild extends PureComponent {
     if (!language) language = LanguageMapper.error;
     let repositoryType = RepositoryTypeMapper[codeRepository.repositoryType];
     if (!repositoryType) repositoryType = RepositoryTypeMapper.error;
-    const buildState = this.state.buildState || imageConfig.buildState;
+    const { buildState = imageConfig.buildState } = this.state;
     let buildStateText = BuildStateMapper[buildState];
     if (!buildStateText) buildStateText = BuildStateMapper.error;
     return (
@@ -160,7 +179,7 @@ export default class ImageBuild extends PureComponent {
               <tr>
                 <td className={styles.tableLabel}>仓库地址</td>
                 <td className={styles.tableValue}>
-                  <a target="_blank" href={codeRepository.repositoryUrl}>{codeRepository.repositoryUrl}</a>
+                  <a target="_blank" rel="noopener noreferrer" href={codeRepository.repositoryUrl}>{codeRepository.repositoryUrl}</a>
                 </td>
                 <td className={styles.tableLabel}>仓库类型</td>
                 <td className={styles.tableValue}>{repositoryType.label}</td>
@@ -174,7 +193,7 @@ export default class ImageBuild extends PureComponent {
               <tr>
                 <td className={styles.tableLabel}>服务域名</td>
                 <td className={styles.tableValue}>
-                  <a target="_blank" href={`http://${imageConfig.serverUrl}`}>{imageConfig.serverUrl}</a>
+                  <a target="_blank" rel="noopener noreferrer" href={`http://${imageConfig.serverUrl}`}>{imageConfig.serverUrl}</a>
                 </td>
                 <td className={styles.tableLabel}>构建状态</td>
                 <td className={styles.tableValue}>
@@ -186,7 +205,7 @@ export default class ImageBuild extends PureComponent {
             </tbody>
           </table>
           <div style={{ height: 20 }} />
-          <div className={xtermStyles.terminal} id={showBuildTerminalId} style={{ height: 600 }} />
+          <div className={xtermStyles.terminal} id={showBuildTerminalId} style={{ height: screenHeight }} />
         </Card>
       </PageHeaderLayout>
     );
