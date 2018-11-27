@@ -125,7 +125,7 @@ export default class ImageConfig extends PureComponent {
             <Button type="primary" onClick={this.addImageConfigShow}>新增</Button>
           </Form.Item>
         </Row>
-      </Form >
+      </Form>
     );
   }
 
@@ -222,7 +222,7 @@ export default class ImageConfig extends PureComponent {
               <div>
                 <span className={styles.colLabel}>代码地址:</span>
                 <span className={styles.colValue}>
-                  <a target='_blank' href={record.repositoryUrl}>{record.repositoryUrl}</a>
+                  <a target='_blank' href={record.repositoryUrl} rel="noopener noreferrer">{record.repositoryUrl}</a>
                 </span>
               </div>
               <div>
@@ -242,7 +242,7 @@ export default class ImageConfig extends PureComponent {
           )
         },
       },
-      { title: '服务域名', dataIndex: 'serverUrl', render: val => <a target='_blank' href={`http://${val}`}>{val}</a> },
+      { title: '服务域名', dataIndex: 'serverUrl', render: val => <a target='_blank' href={`http://${val}`} rel="noopener noreferrer">{val}</a> },
       { title: '服务端口', dataIndex: 'serverPorts' },
       { title: '默认服务数', dataIndex: 'serverCount' },
       {

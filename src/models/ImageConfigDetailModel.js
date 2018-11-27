@@ -75,10 +75,10 @@ export default {
       // 请求数据
       const response = yield call(findImageBuildLog, queryBuildLogParam);
       if (!response) return;
-      const { list, pageSize, pageNum, total } = response;
+      const { records, size, current, total } = response;
       // 保存数据
-      buildLogPagination = { ...buildLogPagination, current: pageNum, pageSize, total };
-      yield put({ type: 'save', payload: { buildLogData: list, queryBuildLogParam, buildLogPagination } });
+      buildLogPagination = { ...buildLogPagination, current, pageSize: size, total };
+      yield put({ type: 'save', payload: { buildLogData: records, queryBuildLogParam, buildLogPagination } });
     },
     *createContainer({ payload }, { select, call, put }) {
       // 加载中

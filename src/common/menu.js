@@ -1,13 +1,13 @@
 import { isUrl } from '../utils/utils';
 
 const menuData = [
-  {
-    name: 'Dashboard',
-    icon: 'dashboard',
-    path: 'dashboard',
-    // hideInBreadcrumb: true,
-    // hideInMenu: true,
-  },
+  // {
+  //   name: 'Dashboard',
+  //   icon: 'dashboard',
+  //   path: 'dashboard',
+  //   // hideInBreadcrumb: true,
+  //   // hideInMenu: true,
+  // },
   {
     name: '服务代码仓库',
     icon: 'IconRepository',
